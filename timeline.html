@@ -1,136 +1,134 @@
 <!DOCTYPE html>
-<html lang="ja"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <title>投稿一覧 - Simpdon クライアント</title> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <link rel="stylesheet" href="./css/styles.css"> 
-    <link rel="icon" href="./ico/simpdon.ico"> 
-</head> 
-<body> 
-    <div class="container"> 
-        <!-- 見出し部分 -->
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>投稿一覧 - Simpdon クライアント</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="icon" href="./ico/simpdon.ico">
+</head>
+<body>
+    <div class="container">
         <div class="header">
             <h1>投稿一覧</h1>
         </div>
 
-        <!-- 投稿リスト部分 -->
-        <div id="posts" class="posts"></div> 
+        <div id="posts" class="posts"></div>
 
-        <div class="menu"> 
-            <a href="javascript:void(0);" onclick="setTimeline('home')">Home TL</a> | 
-            <a href="javascript:void(0);" onclick="setTimeline('public')">Public TL</a> 
-        </div> 
+        <div class="menu">
+            <a href="javascript:void(0);" onclick="setTimeline('home')">Home TL</a> |
+            <a href="javascript:void(0);" onclick="setTimeline('public')">Public TL</a>
+        </div>
 
-        <div class="actions"> 
-            <a href="post.html" class="button">新しい投稿</a> 
-            <a href="login.html" class="logout-link">ログアウト</a> 
-        </div> 
-    </div> 
+        <div class="actions">
+            <a href="post.html" class="button">新しい投稿</a>
+            <a href="login.html" class="logout-link">ログアウト</a>
+        </div>
+    </div>
 
-    <script> 
-        function getCookie(name) { 
-            var ca = document.cookie.split(';'); 
-            for (var i = 0; i < ca.length; i++) { 
-                var c = ca[i].replace(/^\s+/, ''); 
-                if (c.indexOf(name + "=") === 0) { 
-                    return c.substring((name + "=").length, c.length); 
-                } 
-            } 
-            return ""; 
-        } 
+    <script>
+        function getCookie(name) {
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i].trim();
+                if (c.indexOf(name + "=") === 0) {
+                    return c.substring((name + "=").length, c.length);
+                }
+            }
+            return "";
+        }
 
-        function convertIfWebp(url) { 
-            if (!url) return ""; 
-            if (url.lastIndexOf(".webp") === url.length - 5) { 
-                var encodedUrl = encodeURIComponent(url); 
-                var convertUrl = "https://cors-0x10.online:4443/convert?url=" + encodedUrl; 
-                return convertUrl; 
-            } 
-            return url; 
-        } 
+        function convertIfWebp(url) {
+            if (!url) return "";
+            if (url.endsWith(".webp")) {
+                var encodedUrl = encodeURIComponent(url);
+                return "https://cors-0x10.online:4443/convert?url=" + encodedUrl;
+            }
+            return url;
+        }
 
-        var instanceUrl = getCookie('instanceUrl'); 
-        var accessToken = getCookie('accessToken'); 
+        var instanceUrl = getCookie('instanceUrl');
+        var accessToken = getCookie('accessToken');
 
-        if (!instanceUrl || !accessToken) { 
-            window.location.href = 'login.html'; 
-        } 
+        if (!instanceUrl || !accessToken) {
+            window.location.href = 'login.html';
+        }
 
-        function fetchPosts(timelineType) { 
-            var apiUrl = (timelineType === 'public') ? "/api/v1/timelines/public" : "/api/v1/timelines/home"; 
-            var proxyUrl = "https://cors-0x10.online:4443/"; 
-            var fullUrl = proxyUrl + instanceUrl + apiUrl; 
+        var ws;
+        var currentTimeline = 'home';
 
-            var xhr = new XMLHttpRequest(); 
-            xhr.open("GET", fullUrl, true); 
-            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken); 
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); 
+        function setTimeline(type) {
+            currentTimeline = type;
+            if (ws) {
+                ws.close();
+            }
+            connectWebSocket();
+        }
 
-            xhr.onreadystatechange = function () { 
-                if (xhr.readyState === 4) { 
-                    if (xhr.status === 200) { 
-                        try { 
-                            var data = JSON.parse(xhr.responseText); 
-                            displayPosts(data); 
-                        } catch (e) { 
-                            document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>'; 
-                        } 
-                    } else { 
-                        document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。ステータス: ' + xhr.status + '</p>'; 
-                    } 
-                } 
-            }; 
+        function connectWebSocket() {
+            let streamParam = currentTimeline === 'public' ? 'public' : 'user';
+            let streamingUrl = instanceUrl.replace(/^https?:\/\//, '');
+            let wsUrl = "wss://" + streamingUrl + "/api/v1/streaming/?stream=" + streamParam + "&access_token=" + accessToken;
 
-            xhr.onerror = function () { 
-                document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>'; 
-            }; 
+            ws = new WebSocket(wsUrl);
 
-            xhr.send(); 
-        } 
+            ws.onopen = function () {
+                console.log("WebSocket接続完了: " + wsUrl);
+            };
 
-        function displayPosts(posts) { 
-            var container = document.getElementById('posts'); 
-            container.innerHTML = ''; 
+            ws.onmessage = function (event) {
+                let msg = JSON.parse(event.data);
+                if (msg.event === 'update') {
+                    let status = JSON.parse(msg.payload);
+                    addPost(status);
+                }
+            };
 
-            for (var i = 0; i < posts.length; i++) { 
-                var post = posts[i]; 
-                var username = post.account.acct; 
-                var content = post.content; 
-                var avatarUrl = convertIfWebp(post.account.avatar); 
+            ws.onerror = function (err) {
+                console.error("WebSocketエラー", err);
+                document.getElementById('posts').innerHTML = '<p>接続に失敗しました。</p>';
+            };
 
-                var postDiv = document.createElement('div'); 
-                postDiv.className = 'post'; 
+            ws.onclose = function () {
+                console.log("WebSocket切断");
+            };
+        }
 
-                var imagesHtml = ''; 
-                for (var j = 0; j < post.media_attachments.length; j++) { 
-                    var media = post.media_attachments[j]; 
-                    var imgUrl = convertIfWebp(media.url); 
-                    imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">'; 
-                } 
+        function addPost(post) {
+            var container = document.getElementById('posts');
 
-                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) { 
-                    return '<span class="emoji">' + emoji + '</span>'; 
-                }); 
+            var username = post.account.acct;
+            var content = post.content;
+            var avatarUrl = convertIfWebp(post.account.avatar);
 
-                postDiv.innerHTML = 
-                    '<div class="post-header">' + 
-                        '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' + 
-                        '<h2>@' + username + '</h2>' + 
-                    '</div>' + 
-                    '<p>' + emojiContent + '</p>' + 
-                    imagesHtml; 
+            var postDiv = document.createElement('div');
+            postDiv.className = 'post';
 
-                container.appendChild(postDiv); 
-            } 
-        } 
+            var imagesHtml = '';
+            for (var j = 0; j < post.media_attachments.length; j++) {
+                var media = post.media_attachments[j];
+                var imgUrl = convertIfWebp(media.url);
+                imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
+            }
 
-        function setTimeline(type) { 
-            fetchPosts(type); 
-        } 
+            var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
+                return '<span class="emoji">' + emoji + '</span>';
+            });
 
-        // 初期表示はHome TL 
-        setTimeline('home'); 
-    </script> 
-</body> 
+            postDiv.innerHTML =
+                '<div class="post-header">' +
+                    '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
+                    '<h2>@' + username + '</h2>' +
+                '</div>' +
+                '<p>' + emojiContent + '</p>' +
+                imagesHtml;
+
+            // 上に追加（新しい投稿が先頭）
+            container.insertBefore(postDiv, container.firstChild);
+        }
+
+        // 最初に接続開始（Home TL）
+        setTimeline('home');
+    </script>
+</body>
 </html>
