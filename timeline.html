@@ -41,93 +41,87 @@
         function convertIfWebp(url) {
             if (!url) return "";
             if (url.endsWith(".webp")) {
-                var encodedUrl = encodeURIComponent(url);
-                return "https://cors-0x10.online:4443/convert?url=" + encodedUrl;
+                const encoded = encodeURIComponent(url);
+                return "https://cors-0x10.online:4443/convert?url=" + encoded;
             }
             return url;
         }
 
-        var instanceUrl = getCookie('instanceUrl');
-        var accessToken = getCookie('accessToken');
+        const instanceUrl = getCookie('instanceUrl');
+        const accessToken = getCookie('accessToken');
 
         if (!instanceUrl || !accessToken) {
             window.location.href = 'login.html';
         }
 
-        var ws;
-        var currentTimeline = 'home';
+        let ws;
+        let currentTimeline = 'home';
 
         function setTimeline(type) {
             currentTimeline = type;
             if (ws) {
                 ws.close();
             }
-            connectWebSocket();
+            connectWebSocket(type);
         }
 
-        function connectWebSocket() {
-            let streamParam = currentTimeline === 'public' ? 'public' : 'user';
-            let streamingUrl = instanceUrl.replace(/^https?:\/\//, '');
-            let wsUrl = "wss://" + streamingUrl + "/api/v1/streaming/?stream=" + streamParam + "&access_token=" + accessToken;
+        function connectWebSocket(type) {
+            const stream = type === 'public' ? 'public' : 'user';
+            const host = instanceUrl.replace(/^https?:\/\//, '');
+            const wsUrl = `wss://${host}/api/v1/streaming/?stream=${stream}&access_token=${accessToken}`;
 
             ws = new WebSocket(wsUrl);
 
-            ws.onopen = function () {
-                console.log("WebSocket接続完了: " + wsUrl);
-            };
-
-            ws.onmessage = function (event) {
-                let msg = JSON.parse(event.data);
-                if (msg.event === 'update') {
-                    let status = JSON.parse(msg.payload);
-                    addPost(status);
+            ws.onopen = () => console.log('WebSocket 接続完了:', wsUrl);
+            ws.onmessage = (event) => {
+                try {
+                    const msg = JSON.parse(event.data);
+                    if (msg.event === 'update') {
+                        const status = JSON.parse(msg.payload);
+                        addPost(status);
+                    }
+                } catch (e) {
+                    console.error('受信データ解析エラー', e);
                 }
             };
-
-            ws.onerror = function (err) {
-                console.error("WebSocketエラー", err);
-                document.getElementById('posts').innerHTML = '<p>接続に失敗しました。</p>';
+            ws.onerror = (err) => {
+                console.error('WebSocketエラー:', err);
+                document.getElementById('posts').innerHTML = '<p>WebSocket接続に失敗しました。</p>';
             };
-
-            ws.onclose = function () {
-                console.log("WebSocket切断");
-            };
+            ws.onclose = () => console.log('WebSocket切断');
         }
 
         function addPost(post) {
-            var container = document.getElementById('posts');
+            const container = document.getElementById('posts');
+            const username = post.account.acct;
+            const content = post.content;
+            const avatarUrl = convertIfWebp(post.account.avatar);
 
-            var username = post.account.acct;
-            var content = post.content;
-            var avatarUrl = convertIfWebp(post.account.avatar);
-
-            var postDiv = document.createElement('div');
+            const postDiv = document.createElement('div');
             postDiv.className = 'post';
 
-            var imagesHtml = '';
-            for (var j = 0; j < post.media_attachments.length; j++) {
-                var media = post.media_attachments[j];
-                var imgUrl = convertIfWebp(media.url);
-                imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
+            let imagesHtml = '';
+            for (let media of post.media_attachments) {
+                const imgUrl = convertIfWebp(media.url);
+                imagesHtml += `<img src="${imgUrl}" alt="画像" class="post-image">`;
             }
 
-            var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
-                return '<span class="emoji">' + emoji + '</span>';
+            const emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, (_, emoji) => {
+                return `<span class="emoji">${emoji}</span>`;
             });
 
-            postDiv.innerHTML =
-                '<div class="post-header">' +
-                    '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
-                    '<h2>@' + username + '</h2>' +
-                '</div>' +
-                '<p>' + emojiContent + '</p>' +
-                imagesHtml;
+            postDiv.innerHTML = `
+                <div class="post-header">
+                    <img src="${avatarUrl}" alt="@${username}のアイコン" class="user-avatar">
+                    <h2>@${username}</h2>
+                </div>
+                <p>${emojiContent}</p>
+                ${imagesHtml}
+            `;
 
-            // 上に追加（新しい投稿が先頭）
             container.insertBefore(postDiv, container.firstChild);
         }
 
-        // 最初に接続開始（Home TL）
         setTimeline('home');
     </script>
 </body>
