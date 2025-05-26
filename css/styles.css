@@ -1,0 +1,164 @@
+/* 基本のスタイル */  
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 中央揃えから上揃えに変更 */
+    height: auto;
+    box-sizing: border-box;
+}
+
+/* コンテナ */
+.container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    box-sizing: border-box;
+    margin: 0 20px;
+}
+
+/* 見出し */
+h1 {
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #333;
+    text-align: center; /* 見出しを中央揃え */
+}
+
+/* 投稿のカード */
+.post {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+/* ユーザーアイコンのスタイル */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; 
+    margin-right: 10px; 
+    object-fit: cover;  
+    position: relative;
+}
+
+/* 投稿のヘッダー (アイコンとユーザー名の部分) */
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;  /* ヘッダーと本文の間に少し余白 */
+    overflow: hidden;     /* 子要素がはみ出さないようにする */
+    justify-content: flex-start;
+    width: 100%;  /* 横幅を100%にして収める */
+}
+
+/* 投稿のユーザー名 */
+.post-header h2 {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+    font-weight: bold;
+    white-space: nowrap; /* ユーザー名が長くても改行しない */
+    text-overflow: ellipsis; /* ユーザー名が長すぎる場合、...を表示 */
+    overflow: hidden;     /* はみ出したテキストを隠す */
+}
+
+/* 投稿画像のスタイル */
+.post img {
+    max-width: 100%;  
+    height: auto;     
+    border-radius: 8px; 
+    object-fit: cover;  
+}
+
+/* フォーム */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ラベル */
+label {
+    font-size: 16px;
+    text-align: left;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+/* 入力フィールド */
+input[type="text"], textarea {
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* ボタン */
+.button {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 0;
+    font-size: 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .post {
+        margin-top: 15px;
+        padding: 25px;
+    }
+}
+
+/* スマホ画面対応（480px以下） */
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+        margin: 0 10px;
+    }
+    h1 {
+        font-size: 24px;
+    }
+    input[type="text"], textarea, .button {
+        font-size: 16px;
+    }
+
+    .post {
+        margin-top: 20px;
+        padding: 20px;
+    }
+}
