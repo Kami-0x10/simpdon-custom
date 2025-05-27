@@ -90,9 +90,55 @@
 .post {
     border-bottom: 1px solid #eee;
     padding: 12px 0;
-    word-wrap: break-word; /* 長い文字列を折り返す */
+    word-wrap: break-word;  /* 長い単語やURLは折り返す */
+    overflow-wrap: break-word;
+    white-space: normal;    /* 折り返しを強制 */
+    max-width: 100%;        /* コンテナ内に収める */
+    box-sizing: border-box;
 }
 
+/* 投稿テキストに高さ制限とスクロールをつける場合 */
+/* 高さ制限は必要なら調整してください（例: max-height: 200px） */
+.post p {
+    max-width: 100%;
+    white-space: pre-wrap; /* 改行も尊重 */
+    word-break: break-word; /* 長い単語も折り返し */
+    overflow-wrap: break-word;
+    margin: 0;
+    padding: 0;
+}
+
+/* 投稿画像はカード内幅に収めて縮小 */
+.post-image {
+    max-width: 100%;    /* 親幅を超えない */
+    max-height: 300px;  /* 高さの最大値を設定（必要に応じ調整） */
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain; /* 縮小時に画像が切れないように */
+    margin-top: 8px;
+    border-radius: 8px;
+}
+
+/* 投稿ヘッダーのユーザーアイコンも安全に収める */
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* iPhone4S対応 */
+@media (max-width: 320px) {
+    .post-image {
+        max-height: 180px; /* 狭い画面用に縮小 */
+    }
+
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+    }
+}
 /* 投稿ヘッダー */
 .post-header {
     display: flex;
@@ -179,10 +225,6 @@
         padding: 0 6px;
     }
 
-    .post-header {
-        gap: 6px;
-    }
-
     .user-avatar {
         width: 30px;
         height: 30px;
@@ -196,15 +238,4 @@
         bottom: 16px;
         right: 16px;
     }
-}
-
-/* テキストや画像の幅超過を防止 */
-.post, .post p {
-    overflow-wrap: break-word;
-}
-
-/* 画像は画面幅に合わせて縮小 */
-.post-image {
-    max-width: 100%;
-    height: auto;
 }
