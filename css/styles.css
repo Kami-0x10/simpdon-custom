@@ -182,7 +182,7 @@ textarea {
   height: auto;
   object-fit: contain;
   display: block;
-  margin-top: 8px;
+  margin: 8px auto 0; /* ← 修正: 中央揃え */
   border-radius: 8px;
 }
 
@@ -210,11 +210,13 @@ textarea {
   .floating-header {
     height: 48px;
     padding: 0 6px;
-    max-width: 320px;
+    max-width: 100%; /* ← 修正: max-widthを画面幅に合わせる */
+    left: 0; /* ← 修正: 固定位置を左寄せに変更 */
+    transform: none; /* ← 修正: 中央寄せ無効化 */
   }
 
   .floating-header h1 {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .menu,
@@ -251,5 +253,6 @@ textarea {
 
   .post-image {
     max-height: 180px;
+    margin: 8px auto 0; /* ← 修正: 中央揃え（再定義） */
   }
 }
