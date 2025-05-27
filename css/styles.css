@@ -37,16 +37,16 @@
 }
 
 .floating-header .user-id {
-    flex-shrink: 0;
     margin-left: 12px;
     font-size: 14px;
     color: #555;
-    white-space: nowrap;
-    max-width: 120px;      /* 横幅は固定 */
-    overflow: hidden;      /* はみ出し分は隠す */
+    white-space: normal;      /* 折り返しOK */
+    word-break: break-all;    /* 適当なところで改行 */
+    max-width: 60vw;          /* 横幅は画面幅の60%まで（調整可） */
+    overflow-wrap: break-word;
     user-select: text;
-    text-overflow: clip;   /* 省略はしないで見切る */
 }
+
 
 /* メニュー */
 .menu {
