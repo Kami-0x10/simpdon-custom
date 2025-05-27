@@ -64,7 +64,8 @@ a {
 }
 
 .logout-container {
-  margin-left: 8px;
+  margin-left: 4px;
+  max-width: 70px; /* 幅制限を追加 */
   flex-shrink: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -209,19 +210,23 @@ textarea {
 @media (max-width: 320px) {
   .floating-header {
     height: 48px;
-    padding: 0 6px;
+    padding: 0 4px;
     max-width: 100%; /* ← 修正: max-widthを画面幅に合わせる */
     left: 0; /* ← 修正: 固定位置を左寄せに変更 */
     transform: none; /* ← 修正: 中央寄せ無効化 */
   }
 
   .floating-header h1 {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .menu,
   .logout-link {
-    font-size: 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70px; /* 幅制限を追加 */
   }
 
   .container {
