@@ -1,4 +1,4 @@
-/* 基本のスタイル */  
+/* 基本のスタイル */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -7,92 +7,111 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    min-height: 100vh;
+    height: auto;
     box-sizing: border-box;
 }
 
-/* コンテナ（ツイート一覧や投稿フォームをまとめる箱） */
-.container {
-    background-color: white;
+/* 固定ヘッダー全体 */
+.header-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     max-width: 450px;
-    margin: 0 10px 20px;
-    padding: 0;
-    border-radius: 0;
-    box-sizing: border-box;
-}
-
-/* ヘッダー兼投稿フォームカード風 */
-.post.new-post {
-    background-color: #fff;
-    padding: 12px 15px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    height: 50px;
+    background-color: #ffffff;
     border-bottom: 1px solid #e1e8ed;
-    display: flex;
-    flex-direction: column;
-}
-
-/* 投稿フォームのタイトル */
-.post.new-post h1 {
-    font-size: 20px;
-    color: #1da1f2;
-    font-weight: 700;
-    margin: 0 0 10px;
-    text-align: left;
-}
-
-/* 投稿フォーム内の入力欄 */
-.post.new-post input[type="text"], 
-.post.new-post textarea {
-    width: 100%;
-    border: 1px solid #e1e8ed;
-    border-radius: 20px;
-    padding: 10px 15px;
-    font-size: 14px;
-    resize: none;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #14171a;
-}
-
-.post.new-post input[type="text"]:focus, 
-.post.new-post textarea:focus {
-    outline: none;
-    border-color: #1da1f2;
-}
-
-/* 投稿フォームの送信ボタン */
-.post.new-post .button {
-    background-color: #1da1f2;
-    color: white;
-    border-radius: 20px;
-    padding: 10px 0;
-    font-weight: 700;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.post.new-post .button:hover {
-    background-color: #0d8ddb;
-}
-
-/* 投稿カード（TLカード） */
-.post {
-    background-color: #fff;
-    border-bottom: 1px solid #e1e8ed;
-    padding: 12px 15px;
-    display: flex;
-    flex-direction: column;
-}
-
-/* 投稿ヘッダー（アイコン＋ユーザー名） */
-.post-header {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    justify-content: center;
+    z-index: 1100;
+    box-sizing: border-box;
+    padding: 0 15px;
+    user-select: none;
+}
+
+/* ヘッダー内の左右と中央のレイアウト */
+.header-content {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* タイトルは中央に配置 */
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1da1f2;
+    text-align: center;
+    flex-grow: 1;
+    user-select: text;
+}
+
+/* ボタン共通スタイル */
+.header-button {
+    background: none;
+    border: none;
+    color: #1da1f2;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: background-color 0.2s ease;
+    user-select: none;
+    white-space: nowrap;
+}
+
+/* ホバー時 */
+.header-button:hover {
+    background-color: rgba(29,161,242,0.1);
+}
+
+/* 左ボタン（Home/Public切り替え用） */
+.header-left {
+    flex-shrink: 0;
+}
+
+/* 右ボタン（ログアウト用） */
+.header-right {
+    flex-shrink: 0;
+}
+
+/* コンテナはヘッダーの下から表示 */
+.container {
+    margin-top: 50px; /* ヘッダーの高さ分 */
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    box-sizing: border-box;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* 見出し */
+h1 {
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #333;
+    text-align: center;
+}
+
+/* 投稿カード */
+.post {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    overflow: hidden;
+    margin-top: 10px;
 }
 
 /* ユーザーアイコン */
@@ -100,215 +119,166 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    object-fit: cover;
     margin-right: 10px;
+    object-fit: cover;
+    position: relative;
 }
 
-/* ユーザー名 */
+/* 投稿ヘッダー */
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    overflow: hidden;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+/* 投稿ユーザー名 */
 .post-header h2 {
     font-size: 16px;
-    font-weight: 700;
-    color: #14171a;
+    color: #333;
     margin: 0;
+    font-weight: bold;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
-}
-
-/* 投稿テキスト */
-.post-content {
-    font-size: 15px;
-    color: #14171a;
-    line-height: 1.4;
-    word-break: break-word;
-    margin-bottom: 8px;
+    overflow: hidden;
 }
 
 /* 投稿画像 */
 .post img {
     max-width: 100%;
-    border-radius: 14px;
+    height: auto;
+    border-radius: 8px;
     object-fit: cover;
 }
 
-/* フォーム（汎用） */
+/* フォーム */
 .form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 20px;
 }
 
 /* ラベル */
 label {
-    font-size: 14px;
-    color: #657786;
-    margin-bottom: 5px;
+    font-size: 16px;
+    text-align: left;
+    color: #555;
+    margin-bottom: 8px;
 }
 
 /* 入力フィールド */
 input[type="text"], textarea {
-    font-size: 14px;
-    padding: 10px 12px;
-    border: 1px solid #e1e8ed;
-    border-radius: 20px;
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 5px;
+    width: 100%;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #14171a;
-    resize: none;
+    transition: border-color 0.3s ease;
 }
 
 input[type="text"]:focus, textarea:focus {
-    border-color: #1da1f2;
+    border-color: #007bff;
     outline: none;
 }
 
 /* ボタン */
 .button {
-    background-color: #1da1f2;
+    background-color: #007bff;
     color: white;
-    padding: 10px 0;
-    font-size: 16px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-weight: 700;
+    padding: 15px 0;
+    font-size: 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
     text-align: center;
-    transition: background-color 0.2s ease;
     width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
 }
 
 .button:hover {
-    background-color: #0d8ddb;
+    background-color: #0056b3;
 }
 
-/* 浮動ボタン（右下に常駐する投稿ボタン） */
+/* フローティング投稿ボタン */
 .floating-button {
     position: fixed;
-    bottom: 15px;
-    right: 15px;
-    background-color: #1da1f2;
+    bottom: 25px;
+    right: 25px;
+    background-color: #007bff;
     color: white;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 9999px;
-    box-shadow: 0 8px 20px rgba(29,161,242,0.4);
-    cursor: pointer;
+    padding: 15px 25px;
+    font-size: 16px;
+    border-radius: 30px;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    border: none;
-    font-weight: 700;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
 .floating-button:hover {
-    background-color: #0d8ddb;
+    background-color: #0056b3;
 }
 
-/* ログアウトリンク */
+/* ログアウトリンク(通常ページ内用) */
 .logout-container {
     text-align: center;
-    margin: 20px 0;
+    margin: 30px 0;
 }
 
 .logout-link {
-    font-size: 14px;
-    color: #657786;
+    color: #666;
     text-decoration: none;
-    font-weight: 600;
+    font-size: 14px;
 }
 
-.logout-link:hover {
-    text-decoration: underline;
-}
-
-/* レスポンシブ対応 */
-
-/* 768px以下 */
+/* レスポンシブ対応（768px以下） */
 @media (max-width: 768px) {
+    .post {
+        margin-top: 15px;
+        padding: 25px;
+    }
+}
+
+/* スマホ画面対応（480px以下） */
+@media (max-width: 480px) {
     .container {
-        max-width: 100%;
-        margin: 0 10px 20px;
-        border-radius: 0;
-        box-shadow: none;
+        padding: 20px;
+        margin: 0 10px;
+    }
+    h1 {
+        font-size: 24px;
+    }
+    input[type="text"], textarea, .button {
+        font-size: 16px;
     }
     .post {
-        padding: 12px 15px;
+        margin-top: 20px;
+        padding: 20px;
     }
 }
 
-/* 480px以下 */
-@media (max-width: 480px) {
-    .user-avatar {
-        width: 36px;
-        height: 36px;
-        margin-right: 8px;
-    }
-    .post-header h2 {
-        font-size: 14px;
-    }
-    .post-content {
-        font-size: 14px;
-    }
-    .button {
-        font-size: 15px;
-        padding: 10px 0;
-    }
-    .floating-button {
-        padding: 8px 16px;
-        font-size: 13px;
-        bottom: 12px;
-        right: 12px;
-    }
-}
-
-/* iPhone 4s以下（320px以下） */
+/* iPhone 4s 対応（320px以下） */
 @media (max-width: 320px) {
-    body {
-        padding: 0 5px;
+    .header-fixed {
+        height: 44px;
+        padding: 0 10px;
+    }
+    .header-title {
+        font-size: 18px;
+    }
+    .header-button {
+        font-size: 12px;
+        padding: 5px 10px;
     }
     .container {
-        margin: 0;
-        padding: 0;
-        max-width: 100%;
-    }
-    .post, .post.new-post {
-        padding: 10px 12px;
-        border-radius: 0;
-        border-bottom: 1px solid #e1e8ed;
-        box-shadow: none;
-    }
-    .user-avatar {
-        width: 32px;
-        height: 32px;
-        margin-right: 6px;
-    }
-    .post-header h2 {
-        font-size: 13px;
-    }
-    .post-content {
-        font-size: 13px;
-        margin-bottom: 6px;
-    }
-    .post.new-post h1 {
-        font-size: 18px;
-        margin-bottom: 8px;
-    }
-    input[type="text"], textarea {
-        font-size: 13px;
-        padding: 8px 10px;
-        border-radius: 16px;
-    }
-    .button {
-        font-size: 14px;
-        padding: 8px 0;
-        border-radius: 16px;
-    }
-    .floating-button {
-        padding: 8px 14px;
-        font-size: 12px;
-        bottom: 10px;
-        right: 10px;
-    }
-    .logout-link {
-        font-size: 13px;
+        margin-top: 44px;
+        padding: 0 5px;
     }
 }
