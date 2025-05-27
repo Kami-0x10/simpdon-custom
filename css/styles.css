@@ -1,129 +1,130 @@
-/* 固定ヘッダー全体 */
-.post-header-fixed {
+/* 固定ヘッダー全体を画面上中央に配置し追従 */
+.floating-header {
     position: fixed;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
     max-width: 450px;
+    height: 50px;
     background-color: #fff;
     border-bottom: 1px solid #e1e8ed;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 1200;
-    user-select: none;
-}
 
-/* ヘッダー内の横並び配置 */
-.post-header-content {
-    max-width: 450px;
-    height: 50px;
-    margin: 0 auto;
-    padding: 0 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+
+    padding: 0 10px;
     box-sizing: border-box;
+
+    user-select: none;
 }
 
-/* タイトル */
-.post-title {
+/* ヘッダー内の各要素間の余白調整 */
+.floating-header > * {
+    margin: 0 12px;
+    white-space: nowrap;
+}
+
+/* タイトルのスタイル */
+.floating-header h1 {
     font-size: 18px;
     font-weight: 700;
     color: #1da1f2;
     user-select: text;
-    white-space: nowrap;
+    margin-right: 15px;
 }
 
-/* ナビボタン群（Home TL | Public TL） */
-.post-nav-buttons {
+/* Home TL | Public TL のメニュー */
+.menu {
+    font-size: 14px;
+    color: #555;
+}
+
+/* メニュー内リンクのスタイル */
+.menu a {
+    color: #1da1f2;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.menu a:hover {
+    text-decoration: underline;
+}
+
+/* ログアウトリンク */
+.logout-container {
+    /* floatではなくflex内の右寄せ調整 */
+    margin-left: auto;
+}
+
+.logout-link {
+    font-size: 14px;
+    color: #e0245e;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+/* 投稿リストのコンテナはヘッダーの高さ分だけ余白を作る */
+.container {
+    max-width: 450px;
+    margin: 60px auto 20px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+/* 投稿カードの例 */
+.post {
+    border-bottom: 1px solid #eee;
+    padding: 12px 0;
+}
+
+.post-header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    margin-bottom: 6px;
 }
 
-/* 区切りの縦線の代わり */
-.separator {
-    color: #888;
-    font-weight: 600;
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.post-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+
+/* 投稿ボタンを右下に固定 */
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #1da1f2;
+    color: white;
+    font-size: 24px;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    text-align: center;
+    line-height: 52px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    z-index: 1300;
     user-select: none;
 }
 
-/* ナビボタン */
-.nav-button {
-    background: none;
-    border: none;
-    color: #1da1f2;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 5px 8px;
-    border-radius: 15px;
-    transition: background-color 0.2s ease;
-    user-select: none;
-    white-space: nowrap;
-}
-.nav-button:hover {
-    background-color: rgba(29,161,242,0.1);
-}
-
-/* ログアウトボタン */
-.logout-button {
-    margin-left: 10px;
-    background: none;
-    border: none;
-    color: #1da1f2;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 5px 12px;
-    border-radius: 15px;
-    transition: background-color 0.2s ease;
-    user-select: none;
-    white-space: nowrap;
-}
-.logout-button:hover {
-    background-color: rgba(29,161,242,0.1);
-}
-
-/* 投稿カード等のコンテナは固定ヘッダー分下に余白を空ける */
-.container {
-    margin-top: 50px; /* ヘッダー高さ分 */
-    max-width: 450px;
-    width: 100%;
-    padding: 20px 15px;
-    box-sizing: border-box;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-/* レスポンシブ調整 */
-@media (max-width: 480px) {
-    .post-header-content {
-        height: 44px;
-        padding: 0 10px;
-        gap: 10px;
-    }
-    .post-title {
-        font-size: 16px;
-    }
-    .nav-button, .logout-button {
-        font-size: 12px;
-        padding: 4px 8px;
-    }
-}
-@media (max-width: 320px) {
-    .post-header-content {
-        height: 40px;
-        padding: 0 8px;
-        gap: 8px;
-    }
-    .post-title {
-        font-size: 14px;
-    }
-    .nav-button, .logout-button {
-        font-size: 11px;
-        padding: 3px 6px;
-    }
+.floating-button:hover {
+    background-color: #0d8ddb;
 }
