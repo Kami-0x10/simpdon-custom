@@ -40,7 +40,6 @@
     margin-left: 12px;
     font-size: 14px;
     color: #555;
-    white-space: normal;      /* 折り返しOK */
     word-break: break-all;    /* 適当なところで改行 */
     max-width: 60vw;          /* 横幅は画面幅の60%まで（調整可） */
     overflow-wrap: break-word;
