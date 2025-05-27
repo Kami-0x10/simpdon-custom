@@ -1,4 +1,4 @@
-/* ===== 基本スタイル ===== */
+/* === 全体の基本スタイル === */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -7,62 +7,85 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    min-height: 100vh;
     box-sizing: border-box;
 }
 
-/* ===== コンテナ ===== */
+/* === コンテナ全体 === */
 .container {
     background-color: white;
-    padding: 100px 30px 30px; /* 上部にヘッダーの余白を確保 */
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 450px;
     text-align: center;
     box-sizing: border-box;
-    margin: 0 20px;
+    margin: 40px 20px;
 }
 
-/* ===== 見出し ===== */
+/* === 見出し（投稿リストの上） === */
 h1 {
     font-size: 28px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     color: #333;
-    text-align: center;
+    text-align: left;
 }
 
-/* ===== 投稿カード ===== */
+/* === 投稿ボタン（フローティングからTL内へ移動） === */
+.floating-button {
+    position: static;
+    background-color: #007bff;
+    color: white;
+    padding: 14px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+    display: block;
+    box-shadow: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.floating-button:hover {
+    background-color: #0056b3;
+}
+
+/* === 投稿カード === */
 .post {
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin: 20px 0;
+    margin-bottom: 20px;
     word-wrap: break-word;
     overflow: hidden;
+    margin-top: 10px;
 }
 
-/* ===== 投稿ヘッダー ===== */
+/* === 投稿ヘッダー（ユーザーアイコン＋名前） === */
 .post-header {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
     margin-bottom: 15px;
-    width: 100%;
     overflow: hidden;
+    justify-content: flex-start;
+    width: 100%;
 }
 
-/* ===== ユーザーアイコン ===== */
+/* === ユーザーアイコン === */
 .user-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
     object-fit: cover;
+    position: relative;
 }
 
-/* ===== ユーザー名 ===== */
+/* === ユーザー名 === */
 .post-header h2 {
     font-size: 16px;
     color: #333;
@@ -73,7 +96,7 @@ h1 {
     overflow: hidden;
 }
 
-/* ===== 投稿画像 ===== */
+/* === 投稿画像 === */
 .post img {
     max-width: 100%;
     height: auto;
@@ -81,14 +104,14 @@ h1 {
     object-fit: cover;
 }
 
-/* ===== フォーム ===== */
+/* === 投稿フォーム === */
 .form {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* ===== ラベル ===== */
+/* === ラベル === */
 label {
     font-size: 16px;
     text-align: left;
@@ -96,7 +119,7 @@ label {
     margin-bottom: 8px;
 }
 
-/* ===== 入力フィールド ===== */
+/* === テキスト・入力欄 === */
 input[type="text"], textarea {
     padding: 14px;
     font-size: 16px;
@@ -113,7 +136,7 @@ input[type="text"]:focus, textarea:focus {
     outline: none;
 }
 
-/* ===== ボタン ===== */
+/* === 投稿ボタン（フォーム用） === */
 .button {
     background-color: #007bff;
     color: white;
@@ -124,7 +147,9 @@ input[type="text"]:focus, textarea:focus {
     display: inline-block;
     text-align: center;
     width: 100%;
+    box-sizing: border-box;
     cursor: pointer;
+    margin-top: 15px;
     transition: background-color 0.3s ease;
 }
 
@@ -132,59 +157,7 @@ input[type="text"]:focus, textarea:focus {
     background-color: #0056b3;
 }
 
-/* ===== フローティングヘッダー ===== */
-.floating-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    max-width: 450px;
-    background: white;
-    padding: 15px 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    border-bottom: 1px solid #e0e0e0;
-    box-sizing: border-box;
-    margin: 0 auto;
-}
-
-.floating-header h1 {
-    margin: 0;
-    font-size: 24px;
-}
-
-.floating-header .menu {
-    margin-top: 10px;
-    font-size: 14px;
-}
-
-.floating-header .menu a {
-    color: #007bff;
-    text-decoration: none;
-    margin: 0 5px;
-}
-
-/* ===== フローティング投稿ボタン ===== */
-.floating-button {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    background-color: #007bff;
-    color: white;
-    padding: 15px 25px;
-    font-size: 16px;
-    border-radius: 30px;
-    text-decoration: none;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    transition: background-color 0.3s ease;
-}
-
-.floating-button:hover {
-    background-color: #0056b3;
-}
-
-/* ===== ログアウト ===== */
+/* === ログアウトリンク === */
 .logout-container {
     text-align: center;
     margin: 30px 0;
@@ -196,33 +169,33 @@ input[type="text"]:focus, textarea:focus {
     font-size: 14px;
 }
 
-/* ===== レスポンシブ ===== */
+/* === メディアクエリ：タブレット以下 === */
 @media (max-width: 768px) {
     .post {
+        margin-top: 15px;
         padding: 25px;
-    }
-
-    .floating-button {
-        padding: 12px 20px;
-        font-size: 14px;
     }
 }
 
+/* === メディアクエリ：スマホ以下 === */
 @media (max-width: 480px) {
     .container {
-        padding: 100px 20px 20px;
+        padding: 20px;
         margin: 0 10px;
     }
-
     h1 {
         font-size: 24px;
     }
-
     input[type="text"], textarea, .button {
         font-size: 16px;
     }
-
-    .floating-header h1 {
-        font-size: 20px;
+    .post {
+        margin-top: 20px;
+        padding: 20px;
     }
+}
+
+/* === 不要になったフローティングヘッダーは削除 or 非表示 === */
+.floating-header {
+    display: none;
 }
