@@ -68,7 +68,6 @@ a {
   max-width: 70px; /* 幅制限を追加 */
   flex-shrink: 0;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -224,7 +223,6 @@ textarea {
   .logout-link {
     font-size: 11px;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
     max-width: 70px; /* 幅制限を追加 */
   }
