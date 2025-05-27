@@ -1,4 +1,6 @@
-/* 固定ヘッダー全体を画面上中央に配置し追従 */
+/* ------------------------------
+  固定ヘッダー（中央固定、幅最大450px）
+------------------------------ */
 .floating-header {
     position: fixed;
     top: 0;
@@ -22,28 +24,28 @@
     user-select: none;
 }
 
-/* ヘッダー内の各要素間の余白調整 */
+/* ヘッダー内の間隔調整 */
 .floating-header > * {
-    margin: 0 12px;
+    margin: 0 8px;
     white-space: nowrap;
 }
 
-/* タイトルのスタイル */
+/* タイトル */
 .floating-header h1 {
     font-size: 18px;
     font-weight: 700;
     color: #1da1f2;
     user-select: text;
-    margin-right: 15px;
+    margin-right: 12px;
 }
 
-/* Home TL | Public TL のメニュー */
+/* メニュー */
 .menu {
     font-size: 14px;
     color: #555;
 }
 
-/* メニュー内リンクのスタイル */
+/* メニューリンク */
 .menu a {
     color: #1da1f2;
     text-decoration: none;
@@ -55,9 +57,8 @@
     text-decoration: underline;
 }
 
-/* ログアウトリンク */
+/* ログアウト */
 .logout-container {
-    /* floatではなくflex内の右寄せ調整 */
     margin-left: auto;
 }
 
@@ -73,7 +74,9 @@
     text-decoration: underline;
 }
 
-/* 投稿リストのコンテナはヘッダーの高さ分だけ余白を作る */
+/* ------------------------------
+  投稿リストのコンテナ（ヘッダー高さ分マージン）
+------------------------------ */
 .container {
     max-width: 450px;
     margin: 60px auto 20px;
@@ -81,32 +84,48 @@
     box-sizing: border-box;
 }
 
-/* 投稿カードの例 */
+/* ------------------------------
+  投稿カード
+------------------------------ */
 .post {
     border-bottom: 1px solid #eee;
     padding: 12px 0;
+    word-wrap: break-word; /* 長い文字列を折り返す */
 }
 
+/* 投稿ヘッダー */
 .post-header {
     display: flex;
     align-items: center;
     margin-bottom: 6px;
+    gap: 10px;
 }
 
+/* ユーザーアイコン */
 .user-avatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    margin-right: 10px;
+    object-fit: cover;
 }
 
+/* 投稿内画像 */
 .post-image {
     max-width: 100%;
     border-radius: 8px;
     margin-top: 8px;
+    height: auto;
+    display: block;
 }
 
-/* 投稿ボタンを右下に固定 */
+/* 絵文字のスタイル */
+.emoji {
+    /* 必要なら絵文字風にデザイン */
+}
+
+/* ------------------------------
+  投稿ボタン（右下固定）
+------------------------------ */
 .floating-button {
     position: fixed;
     bottom: 20px;
@@ -127,4 +146,65 @@
 
 .floating-button:hover {
     background-color: #0d8ddb;
+}
+
+/* ------------------------------
+  レスポンシブ対応
+------------------------------ */
+
+/* iPhone 4S（幅320px）以下対応 */
+@media (max-width: 320px) {
+    .floating-header {
+        max-width: 320px;
+        padding: 0 6px;
+        height: 48px;
+    }
+
+    .floating-header h1 {
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    .menu {
+        font-size: 12px;
+    }
+
+    .logout-link {
+        font-size: 12px;
+    }
+
+    .container {
+        max-width: 320px;
+        margin: 58px 6px 16px;
+        padding: 0 6px;
+    }
+
+    .post-header {
+        gap: 6px;
+    }
+
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+    }
+
+    .floating-button {
+        width: 46px;
+        height: 46px;
+        font-size: 20px;
+        line-height: 46px;
+        bottom: 16px;
+        right: 16px;
+    }
+}
+
+/* テキストや画像の幅超過を防止 */
+.post, .post p {
+    overflow-wrap: break-word;
+}
+
+/* 画像は画面幅に合わせて縮小 */
+.post-image {
+    max-width: 100%;
+    height: auto;
 }
