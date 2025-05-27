@@ -22,6 +22,10 @@
     box-sizing: border-box;
 
     user-select: none;
+
+    /* ズーム禁止（モバイル用） */
+    touch-action: manipulation;
+    -ms-touch-action: manipulation;
 }
 
 /* ヘッダー内の間隔調整 */
@@ -82,6 +86,7 @@
     margin: 60px auto 20px;
     padding: 0 10px;
     box-sizing: border-box;
+    overflow-wrap: break-word; /* 念のため */
 }
 
 /* ------------------------------
@@ -90,78 +95,61 @@
 .post {
     border-bottom: 1px solid #eee;
     padding: 12px 0;
-    word-wrap: break-word;  /* 長い単語やURLは折り返す */
+    word-wrap: break-word;
     overflow-wrap: break-word;
-    white-space: normal;    /* 折り返しを強制 */
-    max-width: 100%;        /* コンテナ内に収める */
+    white-space: normal;
+    max-width: 100%;
     box-sizing: border-box;
+
+    /* はみ出し防止 */
+    overflow: hidden;
 }
 
-/* 投稿テキストに高さ制限とスクロールをつける場合 */
-/* 高さ制限は必要なら調整してください（例: max-height: 200px） */
+/* 投稿テキスト */
 .post p {
     max-width: 100%;
-    white-space: pre-wrap; /* 改行も尊重 */
-    word-break: break-word; /* 長い単語も折り返し */
+    white-space: pre-wrap;
+    word-break: break-word;
     overflow-wrap: break-word;
     margin: 0;
     padding: 0;
+
+    /* はみ出さないように */
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
-/* 投稿画像はカード内幅に収めて縮小 */
+/* 投稿画像 */
 .post-image {
-    max-width: 100%;    /* 親幅を超えない */
-    max-height: 300px;  /* 高さの最大値を設定（必要に応じ調整） */
+    max-width: 100%;
+    max-height: 300px;
     width: auto;
     height: auto;
     display: block;
-    object-fit: contain; /* 縮小時に画像が切れないように */
+    object-fit: contain;
     margin-top: 8px;
     border-radius: 8px;
+
+    /* はみ出し禁止 */
+    overflow: hidden;
 }
 
-/* 投稿ヘッダーのユーザーアイコンも安全に収める */
+/* 投稿ヘッダーのユーザーアイコン */
 .user-avatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
+    flex-shrink: 0;
 }
 
-/* iPhone4S対応 */
-@media (max-width: 320px) {
-    .post-image {
-        max-height: 180px; /* 狭い画面用に縮小 */
-    }
-
-    .user-avatar {
-        width: 30px;
-        height: 30px;
-    }
-}
 /* 投稿ヘッダー */
 .post-header {
     display: flex;
     align-items: center;
     margin-bottom: 6px;
     gap: 10px;
-}
-
-/* ユーザーアイコン */
-.user-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* 投稿内画像 */
-.post-image {
-    max-width: 100%;
-    border-radius: 8px;
-    margin-top: 8px;
-    height: auto;
-    display: block;
+    overflow-wrap: break-word;
 }
 
 /* 絵文字のスタイル */
@@ -188,6 +176,10 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     z-index: 1300;
     user-select: none;
+
+    /* ズーム禁止 */
+    touch-action: manipulation;
+    -ms-touch-action: manipulation;
 }
 
 .floating-button:hover {
@@ -237,5 +229,9 @@
         line-height: 46px;
         bottom: 16px;
         right: 16px;
+    }
+
+    .post-image {
+        max-height: 180px;
     }
 }
