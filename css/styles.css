@@ -1,4 +1,4 @@
-/* 基本のスタイル */  
+/* ===== 基本スタイル ===== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -6,15 +6,15 @@ body {
     background-color: #f4f4f9;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* 中央揃えから上揃えに変更 */
-    height: auto;
+    align-items: flex-start;
+    min-height: 100vh;
     box-sizing: border-box;
 }
 
-/* コンテナ */
+/* ===== コンテナ ===== */
 .container {
     background-color: white;
-    padding: 30px;
+    padding: 100px 30px 30px; /* 上部にヘッダーの余白を確保 */
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -24,73 +24,71 @@ body {
     margin: 0 20px;
 }
 
-/* 見出し */
+/* ===== 見出し ===== */
 h1 {
     font-size: 28px;
     margin-bottom: 25px;
     color: #333;
-    text-align: center; /* 見出しを中央揃え */
+    text-align: center;
 }
 
-/* 投稿のカード */
+/* ===== 投稿カード ===== */
 .post {
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-bottom: 20px;
+    margin: 20px 0;
     word-wrap: break-word;
     overflow: hidden;
-    margin-top: 10px;
 }
 
-/* ユーザーアイコンのスタイル */
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%; 
-    margin-right: 10px; 
-    object-fit: cover;  
-    position: relative;
-}
-
-/* 投稿のヘッダー (アイコンとユーザー名の部分) */
+/* ===== 投稿ヘッダー ===== */
 .post-header {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;  /* ヘッダーと本文の間に少し余白 */
-    overflow: hidden;     /* 子要素がはみ出さないようにする */
     justify-content: flex-start;
-    width: 100%;  /* 横幅を100%にして収める */
+    margin-bottom: 15px;
+    width: 100%;
+    overflow: hidden;
 }
 
-/* 投稿のユーザー名 */
+/* ===== ユーザーアイコン ===== */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+/* ===== ユーザー名 ===== */
 .post-header h2 {
     font-size: 16px;
     color: #333;
     margin: 0;
     font-weight: bold;
-    white-space: nowrap; /* ユーザー名が長くても改行しない */
-    text-overflow: ellipsis; /* ユーザー名が長すぎる場合、...を表示 */
-    overflow: hidden;     /* はみ出したテキストを隠す */
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
-/* 投稿画像のスタイル */
+/* ===== 投稿画像 ===== */
 .post img {
-    max-width: 100%;  
-    height: auto;     
-    border-radius: 8px; 
-    object-fit: cover;  
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
 }
 
-/* フォーム */
+/* ===== フォーム ===== */
 .form {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* ラベル */
+/* ===== ラベル ===== */
 label {
     font-size: 16px;
     text-align: left;
@@ -98,7 +96,7 @@ label {
     margin-bottom: 8px;
 }
 
-/* 入力フィールド */
+/* ===== 入力フィールド ===== */
 input[type="text"], textarea {
     padding: 14px;
     font-size: 16px;
@@ -115,7 +113,7 @@ input[type="text"]:focus, textarea:focus {
     outline: none;
 }
 
-/* ボタン */
+/* ===== ボタン ===== */
 .button {
     background-color: #007bff;
     color: white;
@@ -126,9 +124,7 @@ input[type="text"]:focus, textarea:focus {
     display: inline-block;
     text-align: center;
     width: 100%;
-    box-sizing: border-box;
     cursor: pointer;
-    margin-top: 15px;
     transition: background-color 0.3s ease;
 }
 
@@ -136,38 +132,12 @@ input[type="text"]:focus, textarea:focus {
     background-color: #0056b3;
 }
 
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .post {
-        margin-top: 15px;
-        padding: 25px;
-    }
-}
-
-/* スマホ画面対応（480px以下） */
-@media (max-width: 480px) {
-    .container {
-        padding: 20px;
-        margin: 0 10px;
-    }
-    h1 {
-        font-size: 24px;
-    }
-    input[type="text"], textarea, .button {
-        font-size: 16px;
-    }
-
-    .post {
-        margin-top: 20px;
-        padding: 20px;
-    }
-}
-
-/* --- ヘッダー（浮かせる） --- */
+/* ===== フローティングヘッダー ===== */
 .floating-header {
     position: fixed;
     top: 0;
-    width: 100%;
+    left: 0;
+    right: 0;
     max-width: 450px;
     background: white;
     padding: 15px 20px;
@@ -175,6 +145,7 @@ input[type="text"]:focus, textarea:focus {
     z-index: 1000;
     border-bottom: 1px solid #e0e0e0;
     box-sizing: border-box;
+    margin: 0 auto;
 }
 
 .floating-header h1 {
@@ -193,11 +164,7 @@ input[type="text"]:focus, textarea:focus {
     margin: 0 5px;
 }
 
-.container {
-    padding-top: 100px; /* ヘッダーの下に余白 */
-}
-
-/* --- フローティング投稿ボタン --- */
+/* ===== フローティング投稿ボタン ===== */
 .floating-button {
     position: fixed;
     bottom: 25px;
@@ -217,7 +184,7 @@ input[type="text"]:focus, textarea:focus {
     background-color: #0056b3;
 }
 
-/* ログアウトリンク */
+/* ===== ログアウト ===== */
 .logout-container {
     text-align: center;
     margin: 30px 0;
@@ -229,3 +196,33 @@ input[type="text"]:focus, textarea:focus {
     font-size: 14px;
 }
 
+/* ===== レスポンシブ ===== */
+@media (max-width: 768px) {
+    .post {
+        padding: 25px;
+    }
+
+    .floating-button {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 100px 20px 20px;
+        margin: 0 10px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    input[type="text"], textarea, .button {
+        font-size: 16px;
+    }
+
+    .floating-header h1 {
+        font-size: 20px;
+    }
+}
