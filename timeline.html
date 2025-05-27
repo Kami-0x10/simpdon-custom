@@ -11,11 +11,10 @@
 
 <body>
     <div class="container">
+
         <div class="header">
             <h1>投稿一覧</h1>
         </div>
-
-        <div id="posts" class="posts"></div>
 
         <div class="menu">
             <a href="javascript:void(0);" onclick="setTimeline('home')">Home TL</a> |
@@ -26,6 +25,9 @@
             <a href="post.html" class="button">新しい投稿</a>
             <a href="login.html" class="logout-link">ログアウト</a>
         </div>
+
+        <div id="posts" class="posts"></div>
+
     </div>
 
     <script>
@@ -61,7 +63,7 @@
         function setTimeline(type) {
             currentTimeline = type;
             lastFetchedIds.clear();
-            document.getElementById('posts').innerHTML = ''; // 投稿エリアをクリア
+            document.getElementById('posts').innerHTML = ''; // 投稿表示を初期化
             fetchPosts(type);
         }
 
@@ -125,20 +127,21 @@
                         <img src="${avatarUrl}" alt="@${username}のアイコン" class="user-avatar">
                         <h2>@${username}</h2>
                     </div>
-                    <p>${emojiContent}</p>
-                    ${imagesHtml}
+                    <div class="post-content">
+                        <p>${emojiContent}</p>
+                        ${imagesHtml}
+                    </div>
                 `;
 
                 container.insertBefore(postDiv, container.firstChild);
             }
 
-            // 最新100件まで保持
             if (lastFetchedIds.size > 100) {
                 lastFetchedIds = new Set([...lastFetchedIds].slice(0, 100));
             }
         }
 
-        // 初期化と定期ポーリング（30秒間隔）
+        // 初期表示とポーリング
         setTimeline('home');
         setInterval(() => fetchPosts(currentTimeline), 30000);
     </script>
