@@ -36,17 +36,16 @@
     text-overflow: ellipsis; /* 長すぎると省略 */
 }
 
-/* ユーザーID表示 */
 .floating-header .user-id {
     flex-shrink: 0;
     margin-left: 12px;
     font-size: 14px;
     color: #555;
     white-space: nowrap;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 120px;      /* 横幅は固定 */
+    overflow: hidden;      /* はみ出し分は隠す */
     user-select: text;
+    text-overflow: clip;   /* 省略はしないで見切る */
 }
 
 /* メニュー */
