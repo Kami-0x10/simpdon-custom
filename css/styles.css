@@ -1,284 +1,129 @@
-/* 基本のスタイル */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: auto;
-    box-sizing: border-box;
-}
-
 /* 固定ヘッダー全体 */
-.header-fixed {
+.post-header-fixed {
     position: fixed;
     top: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
     max-width: 450px;
-    height: 50px;
-    background-color: #ffffff;
+    background-color: #fff;
     border-bottom: 1px solid #e1e8ed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1100;
-    box-sizing: border-box;
-    padding: 0 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1200;
     user-select: none;
 }
 
-/* ヘッダー内の左右と中央のレイアウト */
-.header-content {
-    width: 100%;
+/* ヘッダー内の横並び配置 */
+.post-header-content {
     max-width: 450px;
+    height: 50px;
+    margin: 0 auto;
+    padding: 0 15px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
+    gap: 15px;
+    box-sizing: border-box;
 }
 
-/* タイトルは中央に配置 */
-.header-title {
-    font-size: 20px;
+/* タイトル */
+.post-title {
+    font-size: 18px;
     font-weight: 700;
     color: #1da1f2;
-    text-align: center;
-    flex-grow: 1;
     user-select: text;
+    white-space: nowrap;
 }
 
-/* ボタン共通スタイル */
-.header-button {
+/* ナビボタン群（Home TL | Public TL） */
+.post-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 区切りの縦線の代わり */
+.separator {
+    color: #888;
+    font-weight: 600;
+    user-select: none;
+}
+
+/* ナビボタン */
+.nav-button {
     background: none;
     border: none;
     color: #1da1f2;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 5px 8px;
+    border-radius: 15px;
     transition: background-color 0.2s ease;
     user-select: none;
     white-space: nowrap;
 }
-
-/* ホバー時 */
-.header-button:hover {
+.nav-button:hover {
     background-color: rgba(29,161,242,0.1);
 }
 
-/* 左ボタン（Home/Public切り替え用） */
-.header-left {
-    flex-shrink: 0;
+/* ログアウトボタン */
+.logout-button {
+    margin-left: 10px;
+    background: none;
+    border: none;
+    color: #1da1f2;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px 12px;
+    border-radius: 15px;
+    transition: background-color 0.2s ease;
+    user-select: none;
+    white-space: nowrap;
+}
+.logout-button:hover {
+    background-color: rgba(29,161,242,0.1);
 }
 
-/* 右ボタン（ログアウト用） */
-.header-right {
-    flex-shrink: 0;
-}
-
-/* コンテナはヘッダーの下から表示 */
+/* 投稿カード等のコンテナは固定ヘッダー分下に余白を空ける */
 .container {
-    margin-top: 50px; /* ヘッダーの高さ分 */
-    background-color: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    margin-top: 50px; /* ヘッダー高さ分 */
     max-width: 450px;
-    text-align: center;
+    width: 100%;
+    padding: 20px 15px;
     box-sizing: border-box;
-    margin-left: 20px;
-    margin-right: 20px;
-}
-
-/* 見出し */
-h1 {
-    font-size: 28px;
-    margin-bottom: 25px;
-    color: #333;
-    text-align: center;
-}
-
-/* 投稿カード */
-.post {
     background-color: #fff;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-    word-wrap: break-word;
-    overflow: hidden;
-    margin-top: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
-/* ユーザーアイコン */
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
-    position: relative;
-}
-
-/* 投稿ヘッダー */
-.post-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    overflow: hidden;
-    justify-content: flex-start;
-    width: 100%;
-}
-
-/* 投稿ユーザー名 */
-.post-header h2 {
-    font-size: 16px;
-    color: #333;
-    margin: 0;
-    font-weight: bold;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-/* 投稿画像 */
-.post img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
-/* フォーム */
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* ラベル */
-label {
-    font-size: 16px;
-    text-align: left;
-    color: #555;
-    margin-bottom: 8px;
-}
-
-/* 入力フィールド */
-input[type="text"], textarea {
-    padding: 14px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-top: 5px;
-    width: 100%;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-}
-
-input[type="text"]:focus, textarea:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-/* ボタン */
-.button {
-    background-color: #007bff;
-    color: white;
-    padding: 15px 0;
-    font-size: 18px;
-    border-radius: 8px;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    width: 100%;
-    box-sizing: border-box;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: background-color 0.3s ease;
-}
-
-.button:hover {
-    background-color: #0056b3;
-}
-
-/* フローティング投稿ボタン */
-.floating-button {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    background-color: #007bff;
-    color: white;
-    padding: 15px 25px;
-    font-size: 16px;
-    border-radius: 30px;
-    text-decoration: none;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    transition: background-color 0.3s ease;
-}
-
-.floating-button:hover {
-    background-color: #0056b3;
-}
-
-/* ログアウトリンク(通常ページ内用) */
-.logout-container {
-    text-align: center;
-    margin: 30px 0;
-}
-
-.logout-link {
-    color: #666;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-/* レスポンシブ対応（768px以下） */
-@media (max-width: 768px) {
-    .post {
-        margin-top: 15px;
-        padding: 25px;
-    }
-}
-
-/* スマホ画面対応（480px以下） */
+/* レスポンシブ調整 */
 @media (max-width: 480px) {
-    .container {
-        padding: 20px;
-        margin: 0 10px;
-    }
-    h1 {
-        font-size: 24px;
-    }
-    input[type="text"], textarea, .button {
-        font-size: 16px;
-    }
-    .post {
-        margin-top: 20px;
-        padding: 20px;
-    }
-}
-
-/* iPhone 4s 対応（320px以下） */
-@media (max-width: 320px) {
-    .header-fixed {
+    .post-header-content {
         height: 44px;
         padding: 0 10px;
+        gap: 10px;
     }
-    .header-title {
-        font-size: 18px;
+    .post-title {
+        font-size: 16px;
     }
-    .header-button {
+    .nav-button, .logout-button {
         font-size: 12px;
-        padding: 5px 10px;
+        padding: 4px 8px;
     }
-    .container {
-        margin-top: 44px;
-        padding: 0 5px;
+}
+@media (max-width: 320px) {
+    .post-header-content {
+        height: 40px;
+        padding: 0 8px;
+        gap: 8px;
+    }
+    .post-title {
+        font-size: 14px;
+    }
+    .nav-button, .logout-button {
+        font-size: 11px;
+        padding: 3px 6px;
     }
 }
