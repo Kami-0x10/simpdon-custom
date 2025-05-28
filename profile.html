@@ -25,11 +25,10 @@
     </div>
 
     <script>
-        // iOS6対応: trim未対応のため正規表現で代用
         function getCookie(name) {
             var ca = document.cookie.split(';');
             for (var i = 0; i < ca.length; i++) {
-                var c = ca[i].replace(/^\s+|\s+$/g, '');
+                var c = ca[i].replace(/^\s+/, '');
                 if (c.indexOf(name + "=") === 0) {
                     return c.substring((name + "=").length, c.length);
                 }
@@ -52,11 +51,6 @@
             window.location.href = 'login.html';
         }
 
-        // 末尾スラッシュ除去
-        if (instanceUrl.charAt(instanceUrl.length - 1) === '/') {
-            instanceUrl = instanceUrl.substring(0, instanceUrl.length - 1);
-        }
-
         // プロフィール取得
         function fetchProfile() {
             var apiUrl = "/api/v1/accounts/verify_credentials";
@@ -68,37 +62,32 @@
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
             xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            displayProfile(data);
-                            fetchUserPosts(data.id);
-                        } catch (e) {
-                            document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
-                        }
-                    } else {
-                        document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。(' + xhr.status + ')</p>';
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        displayProfile(data);
+                        fetchUserPosts(data.id); // ← ここで自分の投稿を取得
+                    } catch (e) {
+                        document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
                     }
                 }
             };
 
             xhr.onerror = function () {
-                document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました（通信エラー）。</p>';
+                document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
             };
 
             xhr.send();
         }
 
-        // プロフィール表示
         function displayProfile(data) {
             var container = document.getElementById('profile');
             var avatarUrl = convertIfWebp(data.avatar);
             var displayName = data.display_name || data.username;
             var acct = data.acct;
-            var note = data.note || "";
-            var followers = data.followers_count || 0;
-            var following = data.following_count || 0;
+            var note = data.note;
+            var followers = data.followers_count;
+            var following = data.following_count;
 
             var profileHtml =
                 '<div class="profile-box">' +
@@ -111,7 +100,7 @@
             container.innerHTML = profileHtml;
         }
 
-        // 投稿取得
+        // 自分の投稿を取得
         function fetchUserPosts(accountId) {
             var apiUrl = "/api/v1/accounts/" + accountId + "/statuses";
             var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
@@ -122,28 +111,24 @@
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
             xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            displayPosts(data);
-                        } catch (e) {
-                            document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
-                        }
-                    } else {
-                        document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。(' + xhr.status + ')</p>';
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        displayPosts(data);
+                    } catch (e) {
+                        document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
                     }
                 }
             };
 
             xhr.onerror = function () {
-                document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました（通信エラー）。</p>';
+                document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
             };
 
             xhr.send();
         }
 
-        // 投稿表示
+        // 投稿表示（timeline.htmlと同様）
         function displayPosts(posts) {
             var container = document.getElementById('posts');
             container.innerHTML = '';
@@ -164,9 +149,8 @@
                     imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
                 }
 
-                // iOS6対応のためreplaceの引数は明示的に
-                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function(match, emojiName) {
-                    return '<span class="emoji">:' + emojiName + ':</span>';
+                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
+                    return '<span class="emoji">' + emoji + '</span>';
                 });
 
                 postDiv.innerHTML =
@@ -181,10 +165,8 @@
             }
         }
 
-        // 初期処理
-        window.onload = function() {
-            fetchProfile();
-        };
+        // 実行
+        fetchProfile();
     </script>
 
 </body>
