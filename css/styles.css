@@ -259,3 +259,19 @@ textarea {
     margin: 8px auto 0; /* ← 修正: 中央揃え（再定義） */
   }
 }
+
+.post-actions {
+　　　　margin-top: 10px;
+}
+.post-actions button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.post-actions button:hover {
+    background-color: #e0e0e0;
+}
