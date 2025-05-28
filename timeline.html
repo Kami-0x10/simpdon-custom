@@ -6,10 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./css/styles.css">
   <link rel="icon" href="./ico/simpdon.ico">
+  <style>
+    .post-actions button {
+      margin-right: 10px;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+
+    .liked {
+      color: red;
+      font-weight: bold;
+    }
+
+    .boosted {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- 固定ヘッダー -->
   <div class="floating-header">
     <a href="./profile.html"><h1>プロフィール</h1></a>
     <div class="menu">
@@ -26,9 +42,9 @@
 
   <script>
     function getCookie(name) {
-      var ca = document.cookie.split(';');
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i].replace(/^\s+/, '');
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        const c = ca[i].trim();
         if (c.indexOf(name + "=") === 0) {
           return c.substring((name + "=").length, c.length);
         }
@@ -38,10 +54,7 @@
 
     function convertIfWebp(url) {
       if (!url) return "";
-      if (url.endsWith(".webp")) {
-        return "https://cors-0x10.online:4443/convert?url=" + encodeURIComponent(url);
-      }
-      return url;
+      return url.endsWith(".webp") ? "https://cors-0x10.online:4443/convert?url=" + encodeURIComponent(url) : url;
     }
 
     let instanceUrl = getCookie('instanceUrl');
@@ -52,7 +65,6 @@
       window.location.href = 'login.html';
     }
 
-    // スラッシュ修正
     if (instanceUrl.endsWith("/")) {
       instanceUrl = instanceUrl.slice(0, -1);
     }
@@ -100,6 +112,8 @@
         const content = post.content;
         const avatarUrl = convertIfWebp(post.account.avatar);
         const postId = post.id;
+        const isFavourited = post.favourited;
+        const isReblogged = post.reblogged;
 
         const postDiv = document.createElement('div');
         postDiv.className = 'post';
@@ -122,8 +136,8 @@
           <p>${emojiContent}</p>
           ${imagesHtml}
           <div class="post-actions">
-            <button onclick="favouritePost('${postId}')">❤️ いいね</button>
-            <button onclick="boostPost('${postId}')">🔁 ブースト</button>
+            <button id="fav-${postId}" class="${isFavourited ? 'liked' : ''}" onclick="toggleFavourite('${postId}', ${isFavourited})">❤️ いいね</button>
+            <button id="boost-${postId}" class="${isReblogged ? 'boosted' : ''}" onclick="toggleBoost('${postId}', ${isReblogged})">🔁 ブースト</button>
           </div>
         `;
 
@@ -131,24 +145,40 @@
       });
     }
 
-    function favouritePost(postId) {
-      const url = proxyUrl + instanceUrl + "/api/v1/statuses/" + postId + "/favourite";
-      sendAction(url);
+    function toggleFavourite(postId, isFavourited) {
+      const action = isFavourited ? 'unfavourite' : 'favourite';
+      const url = `${proxyUrl}${instanceUrl}/api/v1/statuses/${postId}/${action}`;
+      const button = document.getElementById(`fav-${postId}`);
+
+      sendAction(url, () => {
+        button.classList.toggle('liked');
+        button.setAttribute('onclick', `toggleFavourite('${postId}', ${!isFavourited})`);
+      });
     }
 
-    function boostPost(postId) {
-      const url = proxyUrl + instanceUrl + "/api/v1/statuses/" + postId + "/reblog";
-      sendAction(url);
+    function toggleBoost(postId, isReblogged) {
+      const action = isReblogged ? 'unreblog' : 'reblog';
+      const url = `${proxyUrl}${instanceUrl}/api/v1/statuses/${postId}/${action}`;
+      const button = document.getElementById(`boost-${postId}`);
+
+      sendAction(url, () => {
+        button.classList.toggle('boosted');
+        button.setAttribute('onclick', `toggleBoost('${postId}', ${!isReblogged})`);
+      });
     }
 
-    function sendAction(url) {
+    function sendAction(url, callback) {
       const xhr = new XMLHttpRequest();
       xhr.open("POST", url, true);
       xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status !== 200) {
-          alert("アクションに失敗しました。ステータス: " + xhr.status);
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            callback();
+          } else {
+            alert("操作に失敗しました（ステータス: " + xhr.status + "）");
+          }
         }
       };
       xhr.send();
