@@ -234,12 +234,6 @@
       document.getElementById('posts').innerHTML = '';
       fetchPosts(type);
     }
-
-    // 初期表示＆30秒ごとに更新
-    setTimeline('home');
-    setInterval(function () {
-      fetchPosts(currentTimeline);
-    }, 30000);
   </script>
 
 </body>
