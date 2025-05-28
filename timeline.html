@@ -6,8 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/styles.css">
     <link rel="icon" href="./ico/simpdon.ico">
-</head>
+    <style>
+        .post-actions {
+            margin-top: 10px;
+        }
 
+        .post-actions button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            background-color: #f0f0f0;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .post-actions button:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
 <body>
 
     <!-- 固定ヘッダー -->
@@ -59,7 +76,7 @@
         function fetchPosts(timelineType) {
             var apiUrl = (timelineType === 'public') ? "/api/v1/timelines/public" : "/api/v1/timelines/home";
             var proxyUrl = "https://cors-0x10.online:4443/";
-            var fullUrl = proxyUrl + instanceUrl + apiUrl;
+            var fullUrl = proxyUrl + encodeURIComponent(instanceUrl) + apiUrl;
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", fullUrl, true);
@@ -82,3 +99,105 @@
             };
 
             xhr.onerror = function () {
+                document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
+            };
+
+            xhr.send();
+        }
+
+        function displayPosts(posts) {
+            var container = document.getElementById('posts');
+            container.innerHTML = '';
+
+            for (var i = 0; i < posts.length; i++) {
+                var post = posts[i];
+                var username = post.account.acct;
+                var content = post.content;
+                var avatarUrl = convertIfWebp(post.account.avatar);
+                var postId = post.id;
+
+                var postDiv = document.createElement('div');
+                postDiv.className = 'post';
+
+                var imagesHtml = '';
+                for (var j = 0; j < post.media_attachments.length; j++) {
+                    var media = post.media_attachments[j];
+                    var imgUrl = convertIfWebp(media.url);
+                    imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
+                }
+
+                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
+                    return '<span class="emoji">' + emoji + '</span>';
+                });
+
+                var actionsHtml =
+                    '<div class="post-actions">' +
+                    '<button onclick="favouritePost(\'' + postId + '\')">❤️いいね</button>' +
+                    '<button onclick="boostPost(\'' + postId + '\')">🔁ブースト</button>' +
+                    '</div>';
+
+                postDiv.innerHTML =
+                    '<div class="post-header">' +
+                    '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
+                    '<h2>@' + username + '</h2>' +
+                    '</div>' +
+                    '<p>' + emojiContent + '</p>' +
+                    imagesHtml +
+                    actionsHtml;
+
+                container.appendChild(postDiv);
+            }
+        }
+
+        function favouritePost(postId) {
+            var fullUrl = "https://cors-0x10.online:4443/" + encodeURIComponent(instanceUrl) + "/api/v1/statuses/" + postId + "/favourite";
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    alert("❤️ いいねしました！");
+                } else {
+                    alert("⚠️ いいねに失敗しました。ステータス: " + xhr.status);
+                }
+            };
+            xhr.onerror = function () {
+                alert("⚠️ ネットワークエラーでいいねできませんでした。");
+            };
+            xhr.send();
+        }
+
+        function boostPost(postId) {
+            var fullUrl = "https://cors-0x10.online:4443/" + encodeURIComponent(instanceUrl) + "/api/v1/statuses/" + postId + "/reblog";
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    alert("🔁 ブーストしました！");
+                } else {
+                    alert("⚠️ ブーストに失敗しました。ステータス: " + xhr.status);
+                }
+            };
+            xhr.onerror = function () {
+                alert("⚠️ ネットワークエラーでブーストできませんでした。");
+            };
+            xhr.send();
+        }
+
+        function setTimeline(type) {
+            currentTimeline = type;
+            document.getElementById('posts').innerHTML = '';
+            fetchPosts(type);
+        }
+
+        setTimeline('home');
+        setInterval(function () {
+            fetchPosts(currentTimeline);
+        }, 30000);
+    </script>
+
+</body>
+</html>
