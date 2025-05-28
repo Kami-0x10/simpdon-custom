@@ -129,46 +129,56 @@
             xhr.send();
         }
 
-        // 投稿表示
         function displayPosts(posts) {
             var container = document.getElementById('posts');
             container.innerHTML = '';
 
             for (var i = 0; i < posts.length; i++) {
                 var post = posts[i];
-                var username = post.account.acct;
-                var content = post.content;
-                var avatarUrl = convertIfWebp(post.account.avatar);
 
-                var postDiv = document.createElement('div');
-                postDiv.className = 'post';
+                var isBoost = post.reblog !== null;
+                var content = isBoost ? post.reblog.content : post.content;
+                var displayAccount = isBoost ? post.reblog.account : post.account;
+                var avatarUrl = convertIfWebp(displayAccount.avatar);
+        var username = displayAccount.acct;
 
-                var imagesHtml = '';
-                for (var j = 0; j < post.media_attachments.length; j++) {
-                    var media = post.media_attachments[j];
-                    var imgUrl = convertIfWebp(media.url);
-                    imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
-                }
+        var postDiv = document.createElement('div');
+        postDiv.className = 'post';
 
-                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
-                    return '<span class="emoji">' + emoji + '</span>';
-                });
-
-                postDiv.innerHTML =
-                    '<div class="post-header">' +
-                    '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
-                    '<h2>@' + username + '</h2>' +
-                    '</div>' +
-                    '<div class="post-content">' + emojiContent + '</div>' +
-                    imagesHtml;
-
-                container.appendChild(postDiv);
-            }
-
-            if (posts.length === 0) {
-                container.innerHTML = '<p>投稿が見つかりません。</p>';
-            }
+        var imagesHtml = '';
+        var mediaList = isBoost ? post.reblog.media_attachments : post.media_attachments;
+        for (var j = 0; j < mediaList.length; j++) {
+            var media = mediaList[j];
+            var imgUrl = convertIfWebp(media.url);
+            imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
         }
+
+        var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
+            return '<span class="emoji">' + emoji + '</span>';
+        });
+
+        var boostInfo = '';
+        if (isBoost) {
+            boostInfo = '<div class="boost-info">🔁 ' + post.account.display_name + ' さんがブースト</div>';
+        }
+
+        postDiv.innerHTML =
+            boostInfo +
+            '<div class="post-header">' +
+            '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
+            '<h2>@' + username + '</h2>' +
+            '</div>' +
+            '<div class="post-content">' + emojiContent + '</div>' +
+            imagesHtml;
+
+        container.appendChild(postDiv);
+    }
+
+    if (posts.length === 0) {
+        container.innerHTML = '<p>投稿が見つかりません。</p>';
+    }
+}
+
 
         // 実行
         fetchProfile();
