@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <title>投稿一覧 - Simpdon クライアント</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./css/styles.css">
   <link rel="icon" href="./ico/simpdon.ico">
+
   <style>
     .post-actions button { margin-right: 10px; padding: 5px 10px; font-size: 14px; }
     .liked { color: red; font-weight: bold; }
@@ -15,186 +17,231 @@
     .boosted-content { border-left: 3px solid #ccc; padding-left: 10px; margin-top: 5px; }
   </style>
 </head>
+
 <body>
 
-<div class="floating-header">
-  <a href="./profile.html"><h1>プロフィール</h1></a>
-  <div class="menu">
-    <a href="javascript:void(0);" onclick="setTimeline('home')">Home TL</a> |
-    <a href="javascript:void(0);" onclick="setTimeline('public')">Public TL</a>
+  <div class="floating-header">
+    <a href="./profile.html"><h1>プロフィール</h1></a>
+    <div class="menu">
+      <a href="javascript:void(0);" onclick="setTimeline('home')">Home TL</a> |
+      <a href="javascript:void(0);" onclick="setTimeline('public')">Public TL</a>
+    </div>
   </div>
-</div>
 
-<div class="container">
-  <div id="posts" class="posts"></div>
-</div>
+  <div class="container">
+    <div id="posts" class="posts"></div>
+  </div>
 
-<a href="post.html" class="floating-button">＋</a>
+  <a href="post.html" class="floating-button">＋</a>
 
-<script>
-function getCookie(name) {
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    const c = ca[i].trim();
-    if (c.indexOf(name + "=") === 0) {
-      return c.substring((name + "=").length, c.length);
-    }
-  }
-  return "";
-}
-
-function convertIfWebp(url) {
-  return (url && url.endsWith(".webp")) ? "https://cors-0x10.online:4443/convert?url=" + encodeURIComponent(url) : url;
-}
-
-let instanceUrl = getCookie('instanceUrl');
-const accessToken = getCookie('accessToken');
-const proxyUrl = "https://cors-0x10.online:4443/";
-
-if (!instanceUrl || !accessToken) {
-  window.location.href = 'login.html';
-}
-
-if (instanceUrl.endsWith("/")) instanceUrl = instanceUrl.slice(0, -1);
-
-let currentTimeline = 'home';
-
-function fetchPosts(timelineType) {
-  const apiUrl = (timelineType === 'public') ? "/api/v1/timelines/public" : "/api/v1/timelines/home";
-  const fullUrl = proxyUrl + instanceUrl + apiUrl;
-
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", fullUrl, true);
-  xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      const container = document.getElementById('posts');
-      if (xhr.status === 200) {
-        try {
-          const data = JSON.parse(xhr.responseText);
-          displayPosts(data);
-        } catch (e) {
-          container.innerHTML = '<p>投稿の読み込みに失敗しました（解析エラー）。</p>';
+  <script>
+    // Cookie取得関数
+    function getCookie(name) {
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i].replace(/^\s+/, '');
+        if (c.indexOf(name + "=") === 0) {
+          return c.substring((name + "=").length, c.length);
         }
+      }
+      return "";
+    }
+
+    // .webp判定（endsWith非対応のためindexOfで代替）
+    function convertIfWebp(url) {
+      if (!url) return "";
+      if (url.indexOf(".webp", url.length - 5) !== -1) {
+        return "https://cors-0x10.online:4443/convert?url=" + encodeURIComponent(url);
+      }
+      return url;
+    }
+
+    var instanceUrl = getCookie('instanceUrl');
+    var accessToken = getCookie('accessToken');
+    var proxyUrl = "https://cors-0x10.online:4443/";
+
+    if (!instanceUrl || !accessToken) {
+      window.location.href = 'login.html';
+    }
+
+    // instanceUrlの末尾のスラッシュ削除
+    if (instanceUrl.charAt(instanceUrl.length - 1) === "/") {
+      instanceUrl = instanceUrl.substring(0, instanceUrl.length - 1);
+    }
+
+    var currentTimeline = 'home';
+
+    // 投稿取得
+    function fetchPosts(timelineType) {
+      var apiUrl = (timelineType === 'public') ? "/api/v1/timelines/public" : "/api/v1/timelines/home";
+      var fullUrl = proxyUrl + instanceUrl + apiUrl;
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", fullUrl, true);
+      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          var container = document.getElementById('posts');
+          if (xhr.status === 200) {
+            try {
+              var data = JSON.parse(xhr.responseText);
+              displayPosts(data);
+            } catch (e) {
+              container.innerHTML = '<p>投稿の読み込みに失敗しました（解析エラー）。</p>';
+            }
+          } else {
+            container.innerHTML = '<p>投稿の読み込みに失敗しました。ステータス: ' + xhr.status + '</p>';
+          }
+        }
+      };
+
+      xhr.onerror = function () {
+        document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました（通信エラー）。</p>';
+      };
+
+      xhr.send();
+    }
+
+    // classList.toggle非対応対応関数
+    function toggleClass(element, className) {
+      var classes = element.className.split(' ');
+      var idx = -1;
+      for (var i = 0; i < classes.length; i++) {
+        if (classes[i] === className) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx >= 0) {
+        classes.splice(idx, 1);
       } else {
-        container.innerHTML = '<p>投稿の読み込みに失敗しました。ステータス: ' + xhr.status + '</p>';
+        classes.push(className);
+      }
+      element.className = classes.join(' ');
+    }
+
+    // 投稿表示
+    function displayPosts(posts) {
+      var container = document.getElementById('posts');
+      container.innerHTML = '';
+
+      for (var i = 0; i < posts.length; i++) {
+        var post = posts[i];
+        var isBoost = false;
+        if (post.reblog) isBoost = true;
+        var actualPost = isBoost ? post.reblog : post;
+        var isReply = actualPost.in_reply_to_id ? true : false;
+
+        var postId = actualPost.id;
+        var avatarUrl = convertIfWebp(actualPost.account.avatar);
+        var username = actualPost.account.acct;
+        var content = actualPost.content;
+        var isFavourited = actualPost.favourited;
+        var isReblogged = actualPost.reblogged;
+
+        var postDiv = document.createElement('div');
+        postDiv.className = 'post';
+
+        var imagesHtml = '';
+        for (var j = 0; j < actualPost.media_attachments.length; j++) {
+          var media = actualPost.media_attachments[j];
+          var imgUrl = convertIfWebp(media.url);
+          imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
+        }
+
+        var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
+          return '<span class="emoji">' + emoji + '</span>';
+        });
+
+        var boostNotice = '';
+        if (isBoost) {
+          boostNotice = '<div class="boost-notice">🔁 @' + post.account.acct + ' さんがブースト</div>';
+        }
+
+        var replyNotice = '';
+        if (isReply) {
+          replyNotice = '<div class="reply-notice">↪️ 返信投稿</div>';
+        }
+
+        postDiv.innerHTML =
+          boostNotice +
+          '<div class="post-header">' +
+          '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
+          '<h2>@' + username + '</h2>' +
+          '</div>' +
+          replyNotice +
+          '<p>' + emojiContent + '</p>' +
+          imagesHtml +
+          '<div class="post-actions">' +
+          '<button id="fav-' + postId + '" class="' + (isFavourited ? 'liked' : '') + '" onclick="toggleFavourite(\'' + postId + '\',' + isFavourited + ')">❤️ いいね</button>' +
+          '<button id="boost-' + postId + '" class="' + (isReblogged ? 'boosted' : '') + '" onclick="toggleBoost(\'' + postId + '\',' + isReblogged + ')">🔁 ブースト</button>' +
+          '</div>';
+
+        container.appendChild(postDiv);
       }
     }
-  };
 
-  xhr.onerror = function () {
-    document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました（通信エラー）。</p>';
-  };
+    // いいね切り替え
+    function toggleFavourite(postId, isFavourited) {
+      var action = isFavourited ? 'unfavourite' : 'favourite';
+      var url = proxyUrl + instanceUrl + '/api/v1/statuses/' + postId + '/' + action;
+      var button = document.getElementById('fav-' + postId);
 
-  xhr.send();
-}
-
-function displayPosts(posts) {
-  const container = document.getElementById('posts');
-  container.innerHTML = '';
-
-  posts.forEach(post => {
-    const isBoost = !!post.reblog;
-    const actualPost = isBoost ? post.reblog : post;
-    const isReply = !!actualPost.in_reply_to_id;
-
-    const postId = actualPost.id;
-    const avatarUrl = convertIfWebp(actualPost.account.avatar);
-    const username = actualPost.account.acct;
-    const content = actualPost.content;
-    const isFavourited = actualPost.favourited;
-    const isReblogged = actualPost.reblogged;
-
-    let postDiv = document.createElement('div');
-    postDiv.className = 'post';
-
-    let imagesHtml = '';
-    for (const media of actualPost.media_attachments) {
-      const imgUrl = convertIfWebp(media.url);
-      imagesHtml += `<img src="${imgUrl}" alt="画像" class="post-image">`;
+      sendAction(url, function () {
+        toggleClass(button, 'liked');
+        // onclick属性の更新（第二引数を反転）
+        var newIsFav = !isFavourited;
+        button.setAttribute('onclick', "toggleFavourite('" + postId + "', " + newIsFav + ")");
+      });
     }
 
-    const emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, (_, emoji) => `<span class="emoji">${emoji}</span>`);
+    // ブースト切り替え
+    function toggleBoost(postId, isReblogged) {
+      var action = isReblogged ? 'unreblog' : 'reblog';
+      var url = proxyUrl + instanceUrl + '/api/v1/statuses/' + postId + '/' + action;
+      var button = document.getElementById('boost-' + postId);
 
-    let boostNotice = '';
-    if (isBoost) {
-      boostNotice = `<div class="boost-notice">🔁 @${post.account.acct} さんがブースト</div>`;
+      sendAction(url, function () {
+        toggleClass(button, 'boosted');
+        var newIsReblogged = !isReblogged;
+        button.setAttribute('onclick', "toggleBoost('" + postId + "', " + newIsReblogged + ")");
+      });
     }
 
-    let replyNotice = '';
-    if (isReply) {
-      replyNotice = `<div class="reply-notice">↪️ 返信投稿</div>`;
+    // 操作用POST送信共通関数
+    function sendAction(url, callback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            callback();
+          } else {
+            alert("操作に失敗しました（ステータス: " + xhr.status + "）");
+          }
+        }
+      };
+      xhr.send();
     }
 
-    postDiv.innerHTML = `
-      ${boostNotice}
-      <div class="post-header">
-        <img src="${avatarUrl}" alt="@${username}のアイコン" class="user-avatar">
-        <h2>@${username}</h2>
-      </div>
-      ${replyNotice}
-      <p>${emojiContent}</p>
-      ${imagesHtml}
-      <div class="post-actions">
-        <button id="fav-${postId}" class="${isFavourited ? 'liked' : ''}" onclick="toggleFavourite('${postId}', ${isFavourited})">❤️ いいね</button>
-        <button id="boost-${postId}" class="${isReblogged ? 'boosted' : ''}" onclick="toggleBoost('${postId}', ${isReblogged})">🔁 ブースト</button>
-      </div>
-    `;
-
-    container.appendChild(postDiv);
-  });
-}
-
-function toggleFavourite(postId, isFavourited) {
-  const action = isFavourited ? 'unfavourite' : 'favourite';
-  const url = `${proxyUrl}${instanceUrl}/api/v1/statuses/${postId}/${action}`;
-  const button = document.getElementById(`fav-${postId}`);
-
-  sendAction(url, () => {
-    button.classList.toggle('liked');
-    button.setAttribute('onclick', `toggleFavourite('${postId}', ${!isFavourited})`);
-  });
-}
-
-function toggleBoost(postId, isReblogged) {
-  const action = isReblogged ? 'unreblog' : 'reblog';
-  const url = `${proxyUrl}${instanceUrl}/api/v1/statuses/${postId}/${action}`;
-  const button = document.getElementById(`boost-${postId}`);
-
-  sendAction(url, () => {
-    button.classList.toggle('boosted');
-    button.setAttribute('onclick', `toggleBoost('${postId}', ${!isReblogged})`);
-  });
-}
-
-function sendAction(url, callback) {
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        callback();
-      } else {
-        alert("操作に失敗しました（ステータス: " + xhr.status + "）");
-      }
+    // タイムライン切り替え
+    function setTimeline(type) {
+      currentTimeline = type;
+      document.getElementById('posts').innerHTML = '';
+      fetchPosts(type);
     }
-  };
-  xhr.send();
-}
 
-function setTimeline(type) {
-  currentTimeline = type;
-  document.getElementById('posts').innerHTML = '';
-  fetchPosts(type);
-}
-
-setTimeline('home');
-setInterval(() => fetchPosts(currentTimeline), 30000);
-</script>
+    // 初期表示＆30秒ごとに更新
+    setTimeline('home');
+    setInterval(function () {
+      fetchPosts(currentTimeline);
+    }, 30000);
+  </script>
 
 </body>
+
 </html>
