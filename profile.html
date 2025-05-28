@@ -1,328 +1,338 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>プロフィール - Simpdon クライアント</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/styles.css">
-    <link rel="icon" href="./ico/simpdon.ico">
-    <style>
-        /* シンプルでiOS6でも崩れにくい基本スタイル */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f9f9f9;
-            color: #333;
-        }
-        .floating-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #2c3e50;
-            color: white;
-            padding: 10px 15px;
-            z-index: 9999;
-            box-sizing: border-box;
-        }
-        .floating-header h1 {
-            margin: 0;
-            font-size: 20px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-        .floating-header .menu {
-            display: inline-block;
-            float: right;
-            line-height: 30px;
-        }
-        .floating-header .menu a {
-            color: #ecf0f1;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .container {
-            padding: 60px 15px 15px 15px; /* ヘッダー分余白 */
-            max-width: 700px;
-            margin: 0 auto;
-            background: white;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .profile-box {
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-        }
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 24px;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-        .profile-box h2 {
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0;
-            font-size: 18px;
-        }
-        .posts .post {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-        }
-        .post-header {
-            margin-bottom: 8px;
-        }
-        .post-header img.user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 16px;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
-        .post-header h2 {
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0;
-            font-size: 14px;
-            font-weight: normal;
-        }
-        .post p {
-            margin: 5px 0 10px 0;
-            word-wrap: break-word;
-        }
-        .post-image {
-            max-width: 100%;
-            height: auto;
-            margin: 5px 0;
-        }
-        button {
-            background-color: #e74c3c;
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>プロフィール - Simpdon クライアント</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="icon" href="./ico/simpdon.ico">
+    <style>
+        /* シンプルでiOS6でも崩れにくい基本スタイル */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f9f9f9;
+            color: #333;
+        }
+        .floating-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            z-index: 9999;
+            box-sizing: border-box;
+        }
+        .floating-header h1 {
+            margin: 0;
+            font-size: 20px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .floating-header .menu {
+            display: inline-block;
+            float: right;
+            line-height: 30px;
+        }
+        .floating-header .menu a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .container {
+            padding: 60px 15px 15px 15px; /* ヘッダー分余白 */
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .profile-box {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        .profile-box h2 {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0;
+            font-size: 18px;
+        }
+        .posts .post {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .post-header {
+            margin-bottom: 8px;
+        }
+        .post-header img.user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .post-header h2 {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        .post p {
+            margin: 5px 0 10px 0;
+            word-wrap: break-word;
+        }
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            margin: 5px 0;
+        }
+        button {
+            background-color: #e74c3c;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        /* emoji span はiOS6対応でシンプルに */
+        .emoji {
+            font-style: normal;
+            color: #f39c12;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- 固定ヘッダー -->
-    <div class="floating-header">
-        <h1>プロフィール</h1>
-        <div class="menu">
-            <a href="timeline.html">タイムラインへ戻る</a>
-        </div>
-    </div>
+    <!-- 固定ヘッダー -->
+    <div class="floating-header">
+        <h1>プロフィール</h1>
+        <div class="menu">
+            <a href="timeline.html">タイムラインへ戻る</a>
+        </div>
+    </div>
 
-    <div class="container">
-        <!-- プロフィール表示領域 -->
-        <div id="profile" class="profile"></div>
-        <!-- 投稿表示領域 -->
-        <div id="posts" class="posts"></div>
-    </div>
+    <div class="container">
+        <!-- プロフィール表示領域 -->
+        <div id="profile" class="profile"></div>
+        <!-- 投稿表示領域 -->
+        <div id="posts" class="posts"></div>
+    </div>
 
-    <script>
-        function getCookie(name) {
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i].replace(/^\s+/, '');
-                if (c.indexOf(name + "=") === 0) {
-                    return c.substring((name + "=").length, c.length);
-                }
-            }
-            return "";
-        }
+    <script>
+        // cookie取得（trim非対応環境用に正規表現で代用）
+        function getCookie(name) {
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i].replace(/^\s+|\s+$/g, '');
+                if (c.indexOf(name + "=") === 0) {
+                    return c.substring((name + "=").length, c.length);
+                }
+            }
+            return "";
+        }
 
-        function convertIfWebp(url) {
-            if (!url) return "";
-            if (url.lastIndexOf(".webp") === url.length - 5) {
-                return "https://cors-0x10.online:4443/convert?url=" + encodeURIComponent(url);
-            }
-            return url;
-        }
+        // webp画像URL変換（プロキシ通し）
+        function convertIfWebp(url) {
+            if (!url) return "";
+            if (url.lastIndexOf(".webp") === (url.length - 5)) {
+                return "https://cors-0x10.online:4443/convert?url=" + encodeURIComponent(url);
+            }
+            return url;
+        }
 
-        var instanceUrl = getCookie('instanceUrl');
-        var accessToken = getCookie('accessToken');
-        var myAccountId = null;
+        var instanceUrl = getCookie('instanceUrl');
+        var accessToken = getCookie('accessToken');
+        var myAccountId = null;
 
-        if (!instanceUrl || !accessToken) {
-            window.location.href = 'login.html';
-            return;
-        }
+        if (!instanceUrl || !accessToken) {
+            window.location.href = 'login.html';
+        }
 
-        // プロフィール取得
-        function fetchProfile() {
-            var apiUrl = "/api/v1/accounts/verify_credentials";
-            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
+        // 末尾スラッシュ削除（URL正規化）
+        if (instanceUrl.charAt(instanceUrl.length - 1) === '/') {
+            instanceUrl = instanceUrl.substring(0, instanceUrl.length - 1);
+        }
 
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", fullUrl, true);
-            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        // プロフィール取得
+        function fetchProfile() {
+            var apiUrl = "/api/v1/accounts/verify_credentials";
+            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            displayProfile(data);
-                            myAccountId = data.id;
-                            fetchUserPosts(myAccountId);
-                        } catch (e) {
-                            document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
-                        }
-                    } else {
-                        document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。Status: ' + xhr.status + '</p>';
-                    }
-                }
-            };
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-            xhr.onerror = function () {
-                document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました（通信エラー）。</p>';
-            };
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            displayProfile(data);
+                            myAccountId = data.id;
+                            fetchUserPosts(myAccountId);
+                        } catch (e) {
+                            document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
+                        }
+                    } else {
+                        document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。Status: ' + xhr.status + '</p>';
+                    }
+                }
+            };
 
-            xhr.send();
-        }
+            xhr.onerror = function () {
+                document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました（通信エラー）。</p>';
+            };
 
-        function displayProfile(data) {
-            var container = document.getElementById('profile');
-            var avatarUrl = convertIfWebp(data.avatar);
-            var displayName = data.display_name || data.username;
-            var acct = data.acct;
-            var note = data.note;
-            var followers = data.followers_count;
-            var following = data.following_count;
+            xhr.send();
+        }
 
-            var profileHtml =
-                '<div class="profile-box">' +
-                '<img src="' + avatarUrl + '" alt="@' + acct + 'のアイコン" class="user-avatar">' +
-                '<h2>' + displayName + ' (@' + acct + ')</h2>' +
-                '<p>' + note + '</p>' +
-                '<p>フォロー中: ' + following + '人　フォロワー: ' + followers + '人</p>' +
-                '</div>';
+        // プロフィール表示
+        function displayProfile(data) {
+            var container = document.getElementById('profile');
+            var avatarUrl = convertIfWebp(data.avatar);
+            var displayName = data.display_name || data.username;
+            var acct = data.acct;
+            var note = data.note || "";
+            var followers = data.followers_count || 0;
+            var following = data.following_count || 0;
 
-            container.innerHTML = profileHtml;
-        }
+            var profileHtml = '';
+            profileHtml += '<div class="profile-box">';
+            profileHtml += '<img src="' + avatarUrl + '" alt="@' + acct + 'のアイコン" class="user-avatar">';
+            profileHtml += '<h2>' + displayName + ' (@' + acct + ')</h2>';
+            profileHtml += '<p>' + note + '</p>';
+            profileHtml += '<p>フォロー中: ' + following + '人　フォロワー: ' + followers + '人</p>';
+            profileHtml += '</div>';
 
-        // 自分の投稿を取得
-        function fetchUserPosts(accountId) {
-            var apiUrl = "/api/v1/accounts/" + accountId + "/statuses";
-            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
+            container.innerHTML = profileHtml;
+        }
 
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", fullUrl, true);
-            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        // 投稿取得
+        function fetchUserPosts(accountId) {
+            var apiUrl = "/api/v1/accounts/" + accountId + "/statuses";
+            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            displayPosts(data);
-                        } catch (e) {
-                            document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
-                        }
-                    } else {
-                        document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。Status: ' + xhr.status + '</p>';
-                    }
-                }
-            };
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-            xhr.onerror = function () {
-                document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました（通信エラー）。</p>';
-            };
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            displayPosts(data);
+                        } catch (e) {
+                            document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
+                        }
+                    } else {
+                        document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。Status: ' + xhr.status + '</p>';
+                    }
+                }
+            };
 
-            xhr.send();
-        }
+            xhr.onerror = function () {
+                document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました（通信エラー）。</p>';
+            };
 
-        // 投稿表示
-        function displayPosts(posts) {
-            var container = document.getElementById('posts');
-            container.innerHTML = '';
+            xhr.send();
+        }
 
-            for (var i = 0; i < posts.length; i++) {
-                var post = posts[i];
-                var username = post.account.acct;
-                var content = post.content;
-                var avatarUrl = convertIfWebp(post.account.avatar);
+        // 投稿表示
+        function displayPosts(posts) {
+            var container = document.getElementById('posts');
+            container.innerHTML = '';
 
-                var postDiv = document.createElement('div');
-                postDiv.className = 'post';
-                postDiv.id = 'post-' + post.id;
+            for (var i = 0; i < posts.length; i++) {
+                var post = posts[i];
+                var username = post.account.acct;
+                var content = post.content;
+                var avatarUrl = convertIfWebp(post.account.avatar);
 
-                var imagesHtml = '';
-                for (var j = 0; j < post.media_attachments.length; j++) {
-                    var media = post.media_attachments[j];
-                    var imgUrl = convertIfWebp(media.url);
-                    imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
-                }
+                var postDiv = document.createElement('div');
+                postDiv.className = 'post';
+                postDiv.id = 'post-' + post.id;
 
-                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
-                    return '<span class="emoji">' + emoji + '</span>';
-                });
+                var imagesHtml = '';
+                for (var j = 0; j < post.media_attachments.length; j++) {
+                    var media = post.media_attachments[j];
+                    var imgUrl = convertIfWebp(media.url);
+                    imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
+                }
 
-                var deleteButtonHtml = '';
-                if (post.account.id === myAccountId) {
-                    deleteButtonHtml = '<button onclick="deletePost(\'' + post.id + '\')">削除</button>';
-                }
+                // iOS6に対応するためreplaceのコールバック引数名を明示
+                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function(match, emojiName){
+                    return '<span class="emoji">:' + emojiName + ':</span>';
+                });
 
-                postDiv.innerHTML =
-                    '<div class="post-header">' +
-                    '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
-                    '<h2>@' + username + '</h2>' +
-                    '</div>' +
-                    '<p>' + emojiContent + '</p>' +
-                    imagesHtml +
-                    deleteButtonHtml;
+                var html =
+                    '<div class="post-header">' +
+                        '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
+                        '<h2>@' + username + '</h2>' +
+                    '</div>' +
+                    '<p>' + emojiContent + '</p>' +
+                    imagesHtml +
+                    '<button onclick="deletePost(\'' + post.id + '\')">削除</button>';
 
-                container.appendChild(postDiv);
-            }
-        }
+                postDiv.innerHTML = html;
+                container.appendChild(postDiv);
+            }
+        }
 
-        // 投稿削除処理（XHR使用）
-        function deletePost(postId) {
-            if (!confirm("この投稿を本当に削除しますか？")) return;
+        // 投稿削除
+        function deletePost(postId) {
+            if (!confirm('この投稿を削除してもよろしいですか？')) return;
 
-            var apiUrl = "/api/v1/statuses/" + postId;
-            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
+            var apiUrl = "/api/v1/statuses/" + postId;
+            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
 
-            var xhr = new XMLHttpRequest();
-            xhr.open("DELETE", fullUrl, true);
-            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        // 削除成功
-                        var postElem = document.getElementById('post-' + postId);
-                        if (postElem && postElem.parentNode) {
-                            postElem.parentNode.removeChild(postElem);
-                        }
-                    } else {
-                        alert("投稿の削除に失敗しました。Status: " + xhr.status);
-                    }
-                }
-            };
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 204) {
+                        var el = document.getElementById('post-' + postId);
+                        if (el) {
+                            el.parentNode.removeChild(el);
+                        }
+                        alert('投稿を削除しました。');
+                    } else {
+                        alert('投稿の削除に失敗しました。Status: ' + xhr.status);
+                    }
+                }
+            };
 
-            xhr.onerror = function () {
-                alert("投稿の削除に失敗しました（通信エラー）。");
-            };
+            xhr.onerror = function () {
+                alert('投稿の削除に失敗しました（通信エラー）。');
+            };
 
-            xhr.send();
-        }
+            xhr.send();
+        }
 
-        // ページ読み込み時に実行
-        fetchProfile();
-
-    </script>
+        // 初期処理
+        window.onload = function () {
+            fetchProfile();
+        };
+    </script>
 
 </body>
 </html>
