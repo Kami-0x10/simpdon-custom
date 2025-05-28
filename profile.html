@@ -6,6 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/styles.css">
     <link rel="icon" href="./ico/simpdon.ico">
+    <style>
+      .delete-button {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        margin-top: 5px;
+        border-radius: 3px;
+        font-size: 14px;
+      }
+      .delete-button:hover {
+        background-color: #ff1a1a;
+      }
+    </style>
 </head>
 <body>
 
@@ -128,7 +143,7 @@
             xhr.send();
         }
 
-        // 投稿表示（timeline.htmlと同様）
+        // 投稿表示（削除ボタン追加）
         function displayPosts(posts) {
             var container = document.getElementById('posts');
             container.innerHTML = '';
@@ -141,6 +156,7 @@
 
                 var postDiv = document.createElement('div');
                 postDiv.className = 'post';
+                postDiv.id = 'post-' + post.id; // 削除時に使う
 
                 var imagesHtml = '';
                 for (var j = 0; j < post.media_attachments.length; j++) {
@@ -153,16 +169,51 @@
                     return '<span class="emoji">' + emoji + '</span>';
                 });
 
+                // 削除ボタンHTML
+                var deleteButtonHtml = '<button class="delete-button" onclick="deletePost(\'' + post.id + '\')">削除</button>';
+
                 postDiv.innerHTML =
                     '<div class="post-header">' +
                     '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
                     '<h2>@' + username + '</h2>' +
                     '</div>' +
                     '<p>' + emojiContent + '</p>' +
-                    imagesHtml;
+                    imagesHtml +
+                    deleteButtonHtml;
 
                 container.appendChild(postDiv);
             }
+        }
+
+        // 投稿削除処理
+        function deletePost(postId) {
+            if (!confirm("この投稿を本当に削除しますか？")) return;
+
+            var apiUrl = "/api/v1/statuses/" + postId;
+            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 202 || xhr.status === 204) {
+                        // 削除成功 → DOMから投稿を削除
+                        var postDiv = document.getElementById('post-' + postId);
+                        if (postDiv) postDiv.remove();
+                    } else {
+                        alert("投稿の削除に失敗しました。ステータス：" + xhr.status);
+                    }
+                }
+            };
+
+            xhr.onerror = function () {
+                alert("投稿の削除に失敗しました（通信エラー）。");
+            };
+
+            xhr.send();
         }
 
         // 実行
