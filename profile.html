@@ -1,116 +1,178 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>プロフィール - Simpdon クライアント</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f9f9f9;
-      padding: 10px;
-    }
-    h1 {
-      text-align: center;
-    }
-    .status {
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin: 10px 0;
-    }
-    .status .username {
-      font-weight: bold;
-    }
-    .status .content {
-      margin-top: 5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>プロフィール - Simpdon クライアント</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="icon" href="./ico/simpdon.ico">
 </head>
 <body>
-  <h1>プロフィール投稿</h1>
-  <div id="statuses">読み込み中...</div>
 
-  <script>
-    // クッキー読み取り関数
-    function getCookie(name) {
-      var value = "; " + document.cookie;
-      var parts = value.split("; " + name + "=");
-      if (parts.length === 2) return parts.pop().split(";").shift();
-      return null;
-    }
+    <!-- 固定ヘッダー -->
+    <div class="floating-header">
+        <h1>プロフィール</h1>
+        <div class="menu">
+            <a href="timeline.html">タイムラインへ戻る</a>
+        </div>
+    </div>
 
-    var instance = getCookie('instanceUrl');
-    var accessToken = getCookie('accessToken');
+    <div class="container">
+        <!-- プロフィール表示領域 -->
+        <div id="profile" class="profile"></div>
+        <!-- 投稿表示領域 -->
+        <div id="posts" class="posts"></div>
+    </div>
 
-    // アカウントID取得とステータス表示
-    function fetchAccountAndStatuses() {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', instance + '/api/v1/accounts/verify_credentials', true);
-      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var account = JSON.parse(xhr.responseText);
-          fetchStatuses(account.id);
+    <script>
+        function getCookie(name) {
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i].replace(/^\s+/, '');
+                if (c.indexOf(name + "=") === 0) {
+                    return c.substring((name + "=").length, c.length);
+                }
+            }
+            return "";
         }
-      };
-      xhr.send();
-    }
 
-    // ステータス取得
-    function fetchStatuses(accountId) {
-      var xhr = new XMLHttpRequest();
-      var url = instance + '/api/v1/accounts/' + accountId + '/statuses?exclude_replies=false&exclude_reblogs=false&limit=20';
-      xhr.open('GET', url, true);
-      xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            var statuses = JSON.parse(xhr.responseText);
-            displayStatuses(statuses);
-          } else {
-            document.getElementById('statuses').innerHTML = '投稿の取得に失敗しました。';
-          }
+        function convertIfWebp(url) {
+            if (!url) return "";
+            if (url.lastIndexOf(".webp") === url.length - 5) {
+                return "https://cors-0x10.online:4443/convert?url=" + encodeURIComponent(url);
+            }
+            return url;
         }
-      };
-      xhr.send();
-    }
 
-    // ステータス表示
-    function displayStatuses(statuses) {
-      var container = document.getElementById('statuses');
-      container.innerHTML = '';
+        var instanceUrl = getCookie('instanceUrl');
+        var accessToken = getCookie('accessToken');
 
-      for (var i = 0; i < statuses.length; i++) {
-        var status = statuses[i];
+        if (!instanceUrl || !accessToken) {
+            window.location.href = 'login.html';
+        }
 
-        var div = document.createElement('div');
-        div.className = 'status';
+        // プロフィール取得
+        function fetchProfile() {
+            var apiUrl = "/api/v1/accounts/verify_credentials";
+            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
 
-        var username = document.createElement('div');
-        username.className = 'username';
-        username.textContent = status.account.acct;
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-        var content = document.createElement('div');
-        content.className = 'content';
-        content.innerHTML = status.content;
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        displayProfile(data);
+                        fetchUserPosts(data.id);
+                    } catch (e) {
+                        document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
+                    }
+                }
+            };
 
-        div.appendChild(username);
-        div.appendChild(content);
-        container.appendChild(div);
-      }
+            xhr.onerror = function () {
+                document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
+            };
 
-      if (statuses.length === 0) {
-        container.innerHTML = '投稿が見つかりません。';
-      }
-    }
+            xhr.send();
+        }
 
-    // 実行
-    if (instance && accessToken) {
-      fetchAccountAndStatuses();
-    } else {
-      document.getElementById('statuses').innerHTML = 'ログイン情報がありません。ログインし直してください。';
-    }
-  </script>
+        function displayProfile(data) {
+            var container = document.getElementById('profile');
+            var avatarUrl = convertIfWebp(data.avatar);
+            var displayName = data.display_name || data.username;
+            var acct = data.acct;
+            var note = data.note;
+            var followers = data.followers_count;
+            var following = data.following_count;
+
+            var profileHtml =
+                '<div class="profile-box">' +
+                '<img src="' + avatarUrl + '" alt="@' + acct + 'のアイコン" class="user-avatar">' +
+                '<h2>' + displayName + ' (@' + acct + ')</h2>' +
+                '<p>' + note + '</p>' +
+                '<p>フォロー中: ' + following + '人　フォロワー: ' + followers + '人</p>' +
+                '</div>';
+
+            container.innerHTML = profileHtml;
+        }
+
+        // 投稿取得（全投稿: 通常, 返信, Boost含む）
+        function fetchUserPosts(accountId) {
+            var apiUrl = "/api/v1/accounts/" + accountId + "/statuses" +
+                         "?exclude_replies=false&exclude_reblogs=false&limit=40";
+            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        displayPosts(data);
+                    } catch (e) {
+                        document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
+                    }
+                }
+            };
+
+            xhr.onerror = function () {
+                document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
+            };
+
+            xhr.send();
+        }
+
+        // 投稿表示
+        function displayPosts(posts) {
+            var container = document.getElementById('posts');
+            container.innerHTML = '';
+
+            for (var i = 0; i < posts.length; i++) {
+                var post = posts[i];
+                var username = post.account.acct;
+                var content = post.content;
+                var avatarUrl = convertIfWebp(post.account.avatar);
+
+                var postDiv = document.createElement('div');
+                postDiv.className = 'post';
+
+                var imagesHtml = '';
+                for (var j = 0; j < post.media_attachments.length; j++) {
+                    var media = post.media_attachments[j];
+                    var imgUrl = convertIfWebp(media.url);
+                    imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
+                }
+
+                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
+                    return '<span class="emoji">' + emoji + '</span>';
+                });
+
+                postDiv.innerHTML =
+                    '<div class="post-header">' +
+                    '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
+                    '<h2>@' + username + '</h2>' +
+                    '</div>' +
+                    '<div class="post-content">' + emojiContent + '</div>' +
+                    imagesHtml;
+
+                container.appendChild(postDiv);
+            }
+
+            if (posts.length === 0) {
+                container.innerHTML = '<p>投稿が見つかりません。</p>';
+            }
+        }
+
+        // 実行
+        fetchProfile();
+    </script>
+
 </body>
 </html>
