@@ -20,10 +20,11 @@
     <div class="container">
         <!-- プロフィール表示領域 -->
         <div id="profile" class="profile"></div>
+        <!-- 投稿表示領域 -->
+        <div id="posts" class="posts"></div>
     </div>
 
     <script>
-        // Cookie取得
         function getCookie(name) {
             var ca = document.cookie.split(';');
             for (var i = 0; i < ca.length; i++) {
@@ -35,7 +36,6 @@
             return "";
         }
 
-        // WebP対応
         function convertIfWebp(url) {
             if (!url) return "";
             if (url.lastIndexOf(".webp") === url.length - 5) {
@@ -62,17 +62,13 @@
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
             xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    var container = document.getElementById('profile');
-                    if (xhr.status === 200) {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            displayProfile(data);
-                        } catch (e) {
-                            container.innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
-                        }
-                    } else {
-                        container.innerHTML = '<p>プロフィールの読み込みに失敗しました。ステータス: ' + xhr.status + '</p>';
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        displayProfile(data);
+                        fetchUserPosts(data.id); // ← ここで自分の投稿を取得
+                    } catch (e) {
+                        document.getElementById('profile').innerHTML = '<p>プロフィールの読み込みに失敗しました。</p>';
                     }
                 }
             };
@@ -84,7 +80,6 @@
             xhr.send();
         }
 
-        // プロフィール表示
         function displayProfile(data) {
             var container = document.getElementById('profile');
             var avatarUrl = convertIfWebp(data.avatar);
@@ -105,6 +100,72 @@
             container.innerHTML = profileHtml;
         }
 
+        // 自分の投稿を取得
+        function fetchUserPosts(accountId) {
+            var apiUrl = "/api/v1/accounts/" + accountId + "/statuses";
+            var fullUrl = "https://cors-0x10.online:4443/" + instanceUrl + apiUrl;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", fullUrl, true);
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        displayPosts(data);
+                    } catch (e) {
+                        document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
+                    }
+                }
+            };
+
+            xhr.onerror = function () {
+                document.getElementById('posts').innerHTML = '<p>投稿の読み込みに失敗しました。</p>';
+            };
+
+            xhr.send();
+        }
+
+        // 投稿表示（timeline.htmlと同様）
+        function displayPosts(posts) {
+            var container = document.getElementById('posts');
+            container.innerHTML = '';
+
+            for (var i = 0; i < posts.length; i++) {
+                var post = posts[i];
+                var username = post.account.acct;
+                var content = post.content;
+                var avatarUrl = convertIfWebp(post.account.avatar);
+
+                var postDiv = document.createElement('div');
+                postDiv.className = 'post';
+
+                var imagesHtml = '';
+                for (var j = 0; j < post.media_attachments.length; j++) {
+                    var media = post.media_attachments[j];
+                    var imgUrl = convertIfWebp(media.url);
+                    imagesHtml += '<img src="' + imgUrl + '" alt="画像" class="post-image">';
+                }
+
+                var emojiContent = content.replace(/:([a-zA-Z0-9_+]+):/g, function (_, emoji) {
+                    return '<span class="emoji">' + emoji + '</span>';
+                });
+
+                postDiv.innerHTML =
+                    '<div class="post-header">' +
+                    '<img src="' + avatarUrl + '" alt="@' + username + 'のアイコン" class="user-avatar">' +
+                    '<h2>@' + username + '</h2>' +
+                    '</div>' +
+                    '<p>' + emojiContent + '</p>' +
+                    imagesHtml;
+
+                container.appendChild(postDiv);
+            }
+        }
+
+        // 実行
         fetchProfile();
     </script>
 
